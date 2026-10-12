@@ -1,0 +1,112 @@
+<!doctype html>
+<!--
+What: the "give it to your AI" install page for traces-md (served at https://maxont.github.io/traces-md/install).
+Why: github2 repos install by handing one sentence to the user's AI agent.
+How: publish it at docs/install/index.html (GitHub Pages from /docs), next to docs/install.sh.
+Generated from the-greatness-lab publish/templates/install.html. Replace the
+"First run" section with the project's own setup steps.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Install traces-md</title>
+<meta name="description" content="Install traces-md by giving this page to your AI. TRACES.md is an open standard for how AI agents record what they did, objectively and honestly, for error analysis and self-optimization. This package ships the reference CLI.">
+<style>
+:root{--bg:#fbf8f3;--card:#fff;--ink:#2a2522;--muted:#6d655f;--line:#e7dfd5;--soft:#f4eee5;--accent:#0f766e;--code:#1e1b19;--codeink:#f2ece4}
+@media (prefers-color-scheme:dark){:root{--bg:#161418;--card:#211e25;--ink:#eee9e4;--muted:#a69da0;--line:#38333d;--soft:#1c1a20;--accent:#2dd4bf;--code:#0f0e11}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);line-height:1.7;font-size:16px;font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Segoe UI",Roboto,sans-serif}
+.wrap{max-width:820px;margin:0 auto;padding:40px 20px 80px}
+a{color:var(--accent)}
+h1{font-size:clamp(28px,5vw,42px);line-height:1.2;margin:0 0 8px}
+h2{margin:44px 0 10px;font-size:26px}
+h3{margin:26px 0 6px;font-size:18px}
+.lead{color:var(--muted);font-size:18px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px 22px;margin:16px 0}
+pre{background:var(--code);color:var(--codeink);padding:14px 16px;border-radius:12px;overflow:auto;font-size:14px;line-height:1.55}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.92em}
+p code,li code{background:var(--soft);padding:1px 6px;border-radius:6px}
+.aipart{border:2px solid var(--accent);border-radius:18px;padding:6px 22px 18px;margin-top:40px;background:var(--card)}
+.tag{display:inline-block;font-size:12px;font-weight:700;letter-spacing:.06em;padding:2px 10px;border-radius:99px;background:var(--accent);color:#fff}
+ol li,ul li{margin:6px 0}
+nav a{margin-right:16px;font-size:14px;text-decoration:none}
+.muted{color:var(--muted)}
+</style>
+</head>
+<body>
+<div class="wrap">
+<nav><a href="../">Home</a><a href="https://github.com/MaxonT/traces-md">GitHub</a></nav>
+
+<h1>Install traces-md</h1>
+<p class="lead">TRACES.md is an open standard for how AI agents record what they did, objectively and honestly, for error analysis and self-optimization. This package ships the reference CLI. You install it by handing this page to your AI.</p>
+
+<h2>For humans</h2>
+<div class="card">
+<p>Paste this into your AI coding agent (Claude Code, Cursor, Codex, or any capable agent). It reads this page and sets everything up, asking before it changes anything.</p>
+<pre>Read https://maxont.github.io/traces-md/install and install traces-md for me.</pre>
+<p>You need Python 3.9 or newer and an agent that can run shell commands.</p>
+<p class="muted">Prefer the terminal? One line installs the <code>traces</code> command (it never edits your shell config):</p>
+<pre>curl -fsSL https://maxont.github.io/traces-md/install.sh | bash</pre>
+<p class="muted">Want to read the script first? <a href="../install.sh">install.sh</a>. Add <code>--dry-run</code> to see what it would do without changing anything.</p>
+</div>
+
+<div class="aipart">
+<h2><span class="tag">FOR YOUR AI</span></h2>
+<p>You are the AI agent the user gave this page to. Everything below is addressed to you. Follow it in order. If you cannot do a step, say so plainly instead of pretending.</p>
+
+<h3>0. What you are installing</h3>
+<p>TRACES.md is an open standard for how AI agents record what they did, objectively and honestly, for error analysis and self-optimization. This package ships the reference CLI. Source: <code>https://github.com/MaxonT/traces-md</code>.</p>
+
+<h3>1. Capability gate</h3>
+<p>You must be able to (a) run shell commands and (b) read and write files in the user's home directory. If either is missing, stop and tell the user to paste this prompt into an agent that can, or to run the terminal one-liner above by hand.</p>
+
+<h3>2. Preconditions</h3>
+<ul>
+<li><code>python3 --version</code> reports 3.9 or newer.</li>
+<li>One of <code>uv</code>, <code>pipx</code> or <code>python3 -m pip</code> is available. Prefer them in that order.</li>
+<li>Never use <code>sudo</code>. Never install system-wide.</li>
+</ul>
+
+<h3>3. Ask before you touch anything</h3>
+<p>Before running anything that changes the machine, show the user the exact command and wait for a yes. Start with a dry run:</p>
+<pre>curl -fsSL https://maxont.github.io/traces-md/install.sh -o /tmp/traces-md-install.sh
+bash /tmp/traces-md-install.sh --dry-run</pre>
+<p>Read the output to the user. After they agree:</p>
+<pre>bash /tmp/traces-md-install.sh
+traces --version</pre>
+<p>If <code>traces</code> is not on PATH, do <strong>not</strong> edit shell config on your own. Tell the user which command fixes it (<code>uv tool update-shell</code>, <code>pipx ensurepath</code>) and ask. Until then <code>python3 -m traces</code> is equivalent.</p>
+
+<h3>4. First run</h3>
+<pre>traces --help
+traces validate --help</pre>
+<p>Then, with the user's yes, try it in the repository you are working in. <code>&lt;agent&gt;</code> is your own tool id, lowercase, for example <code>claude-code</code>, <code>cursor</code>, <code>codex</code>, <code>trae</code>:</p>
+<pre>traces init --agent &lt;agent&gt; --task "set up traces"     # creates .trace/ and a trace file, prints its path
+export TRACES_FILE=.trace/&lt;the printed file&gt;
+traces append -t "shell: traces --version" -a "check the install" -s ok -d "exit 0"
+traces validate</pre>
+
+<h3>5. How to write traces from now on</h3>
+<p>For every task you perform, keep one trace file under <code>.trace/</code>. One line per operation: when, which tool, what it did, how it ended. Use <code>traces append</code> for each step, or <code>traces run -- &lt;command&gt;</code> to run a command and record its real exit code. The format is in <a href="https://github.com/MaxonT/traces-md/blob/main/SPEC.md">SPEC.md</a>.</p>
+<ul>
+<li><strong>Failures are recorded.</strong> A trace with only successes is non-compliant. A failed step stays <code>fail</code> even if a later step repairs it.</li>
+<li><strong>Objective only.</strong> What tool, what it did, what came back. No reasoning, no opinion, no story.</li>
+<li><strong>Append-only.</strong> Never edit or delete a recorded step.</li>
+<li>Run <code>traces validate</code> before you finish. It exits 1 on a malformed or dishonest trace.</li>
+</ul>
+
+<h3>6. Rules you must keep</h3>
+<ul>
+<li>Additive only. Never overwrite or delete existing user files.</li>
+<li>Do not touch shell config, <code>~/.ssh</code>, <code>~/.gitconfig</code> or LaunchAgents without an explicit yes for that specific change.</li>
+<li>Be honest about failure. If a step failed, say which one and why.</li>
+</ul>
+
+<h3>6. Report back</h3>
+<p>Finish with a short summary: what was installed, whether <code>traces --version</code> worked, what you did <em>not</em> do, and the one next step for the user.</p>
+</div>
+
+<p class="muted" style="margin-top:36px">traces-md is MIT licensed. <a href="https://github.com/MaxonT/traces-md">Star it on GitHub</a> if it helps you.</p>
+</div>
+</body>
+</html>
