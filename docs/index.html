@@ -1,0 +1,207 @@
+<!doctype html>
+<!--
+What: the TRACES.md website home page (GitHub Pages from /docs): why every AI should write traces, the format, the CLI.
+Why: a stranger should get the idea in 30 seconds and be able to adopt it in one more minute.
+How: static, self-contained (no JS, no network fonts). Served at https://maxont.github.io/traces-md/
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TRACES.md: how AI agents record what they did</title>
+<meta name="description" content="TRACES.md is an open standard for how any AI agent records what it did: an objective, append-only, honest log of every operation, failures included. For error analysis and self-optimization.">
+<meta property="og:title" content="TRACES.md: how AI agents record what they did">
+<meta property="og:description" content="AGENTS.md says how an agent should behave. TRACES.md records what it actually did. Open standard, one file per task, failures included.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://maxont.github.io/traces-md/">
+<meta property="og:image" content="https://maxont.github.io/traces-md/banner.svg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="canonical" href="https://maxont.github.io/traces-md/">
+<style>
+:root{--bg:#fafbfb;--card:#fff;--ink:#16201f;--muted:#5b6b69;--line:#dfe6e5;--soft:#eef4f3;--accent:#0f766e;--accent2:#0d9488;--code:#0d1117;--codeink:#d7e3e1;--ok:#2dd4bf;--fail:#ff7b72;--part:#f0b429;--ts:#7d8f8c}
+@media (prefers-color-scheme:dark){:root{--bg:#0b0f14;--card:#121922;--ink:#e6eeed;--muted:#97a8a5;--line:#243038;--soft:#101820;--accent:#2dd4bf;--accent2:#9af7e5;--code:#070a0e}}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);line-height:1.7;font-size:17px;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC",Roboto,sans-serif}
+.wrap{max-width:960px;margin:0 auto;padding:0 22px}
+a{color:var(--accent)}
+nav{display:flex;gap:22px;align-items:center;padding:18px 0;font-size:15px}
+nav b{margin-right:auto;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.02em}
+nav a{text-decoration:none;color:var(--muted)}
+nav a:hover{color:var(--accent)}
+.hero img{width:100%;height:auto;border-radius:14px;display:block;border:1px solid var(--line)}
+h1{font-size:clamp(30px,5.2vw,50px);line-height:1.12;margin:34px 0 14px;letter-spacing:-.02em}
+h2{font-size:clamp(24px,3.6vw,32px);line-height:1.2;margin:70px 0 12px;letter-spacing:-.01em}
+h3{margin:0 0 6px;font-size:18px}
+.lead{font-size:20px;color:var(--muted);max-width:760px}
+.cta{display:flex;flex-wrap:wrap;gap:12px;margin:26px 0 6px}
+.btn{display:inline-block;padding:11px 20px;border-radius:10px;border:1px solid var(--accent);color:var(--accent);text-decoration:none;font-weight:600;font-size:16px}
+.btn.primary{background:var(--accent);color:var(--bg)}
+.btn:hover{filter:brightness(1.1)}
+pre{background:var(--code);color:var(--codeink);padding:16px 18px;border-radius:12px;overflow:auto;font-size:14px;line-height:1.6;margin:12px 0;border:1px solid #1d2730}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.9em}
+p code,li code,td code{background:var(--soft);padding:1px 6px;border-radius:6px}
+.ts{color:var(--ts)}.ok{color:var(--ok)}.fail{color:var(--fail);font-weight:700}.part{color:var(--part)}.k{color:#9aa9a6}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin:22px 0}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 20px}
+.card p{margin:0;color:var(--muted);font-size:16px}
+.ladder{display:flex;flex-wrap:wrap;gap:10px;align-items:stretch;margin:22px 0}
+.rung{flex:1 1 170px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 16px}
+.rung b{font-family:ui-monospace,Menlo,monospace;display:block}
+.rung span{color:var(--muted);font-size:14px}
+.rung.now{border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 18%,transparent)}
+.two{display:grid;grid-template-columns:repeat(auto-fit,minmax(380px,1fr));gap:16px}
+@media (max-width:480px){.two{grid-template-columns:1fr}}
+.label{font-size:13px;letter-spacing:.07em;font-weight:700;color:var(--muted);text-transform:uppercase;margin-top:14px}
+table{border-collapse:collapse;width:100%;font-size:15.5px;margin:14px 0}
+td,th{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+th{color:var(--muted);font-weight:600;font-size:13px;letter-spacing:.05em;text-transform:uppercase}
+.rule{border-left:4px solid var(--fail);background:var(--card);border-radius:0 12px 12px 0;padding:14px 20px;margin:20px 0}
+.rule b{font-size:19px}
+.gif img{width:100%;border-radius:12px;border:1px solid var(--line)}
+.muted{color:var(--muted)}
+footer{margin:90px 0 40px;padding-top:24px;border-top:1px solid var(--line);color:var(--muted);font-size:15px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<nav>
+  <b>TRACES.md</b>
+  <a href="#why">Why</a>
+  <a href="#format">Format</a>
+  <a href="#cli">CLI</a>
+  <a href="https://github.com/MaxonT/traces-md/blob/main/SPEC.md">Spec</a>
+  <a href="install/">Install</a>
+  <a href="https://github.com/MaxonT/traces-md">GitHub</a>
+</nav>
+
+<header class="hero">
+  <img src="banner.svg" alt="TRACES.md banner: how AI agents record what they did" width="1280" height="340">
+  <h1>Every AI agent should leave a record of what it actually did.</h1>
+  <p class="lead"><code>AGENTS.md</code> tells an agent how to behave in a repo. <strong>TRACES.md</strong> tells it how to leave an objective, append-only record of what it did: which tool, what it did, how it ended. Failures included. One plain file per task, readable by people and parseable by scripts.</p>
+  <div class="cta">
+    <a class="btn primary" href="https://github.com/MaxonT/traces-md">Star on GitHub</a>
+    <a class="btn" href="install/">Install in 30 seconds</a>
+    <a class="btn" href="https://github.com/MaxonT/traces-md/blob/main/SPEC.md">Read the spec</a>
+  </div>
+</header>
+
+<section>
+<h2 id="idea">The missing file</h2>
+<div class="ladder">
+  <div class="rung"><b>AGENTS.md</b><span>instructions: how to behave</span></div>
+  <div class="rung"><b>.editorconfig</b><span>shared format</span></div>
+  <div class="rung"><b>CHANGELOG.md</b><span>human history</span></div>
+  <div class="rung now"><b>TRACES.md</b><span>objective process record for AI agents</span></div>
+</div>
+<p>An agent says "done, tests pass". Did it run the tests? Which command? Did the first run fail? What did it try next? Today that lives in a chat window that scrolls away, in a format that differs per tool. You cannot improve what you cannot replay.</p>
+</section>
+
+<section>
+<h2 id="format">The format, at a glance</h2>
+<p>Save it as <code>.trace/2026-10-12-claude-code-fix-date-parser.md</code>. Each step is one line: <code>ts | tool | action | result</code>.</p>
+<pre><span class="k">task:</span> Fix the failing date parser test
+<span class="k">agent:</span> claude-code
+<span class="k">started:</span> 2026-10-12T09:14:02-05:00
+<span class="k">spec:</span> traces/0.1.0
+<span class="k">repo:</span> acme/billing
+<span class="k">branch:</span> fix/date-parser
+
+<span class="ts">2026-10-12T09:14:05-05:00</span> | shell: git status | list working tree changes | <span class="ok">ok</span>: clean
+<span class="ts">2026-10-12T09:14:31-05:00</span> | shell: python -m pytest tests/test_dates.py | run the date tests | <span class="fail">fail</span>: exit 1, 1 failed, 11 passed
+<span class="ts">2026-10-12T09:14:48-05:00</span> | read: src/dates.py | read the date parser | <span class="ok">ok</span>: 64 lines
+<span class="ts">2026-10-12T09:15:02-05:00</span> | edit: src/dates.py | change the parse format string to %Y-%m-%d | <span class="ok">ok</span>: 1 line changed
+<span class="ts">2026-10-12T09:15:20-05:00</span> | shell: python -m pytest tests/test_dates.py | run the date tests | <span class="ok">ok</span>: exit 0, 12 passed
+<span class="ts">2026-10-12T09:15:41-05:00</span> | shell: python -m pytest | run the full test suite | <span class="part">partial</span>: exit 0, 212 passed, 3 skipped</pre>
+<p>The same trace has a machine form, JSONL, one JSON object per line, with a published <a href="https://github.com/MaxonT/traces-md/blob/main/schema/trace.schema.json">JSON Schema</a>. The two forms convert into each other without loss (<code>traces fmt --to jsonl</code>).</p>
+<pre>{"type":"step","ts":"2026-10-12T09:14:31-05:00","tool":"shell: python -m pytest tests/test_dates.py","action":"run the date tests","result":{"status":"fail","detail":"exit 1, 1 failed, 11 passed"}}</pre>
+<div class="grid">
+  <div class="card"><h3>Four fields</h3><p>When, which tool, what it did, result. Result is <code>ok</code>, <code>fail</code> or <code>partial</code>, plus a short factual detail.</p></div>
+  <div class="card"><h3>Append-only</h3><p>A step is never edited or deleted. A mistake is fixed by a later step. History stays replayable.</p></div>
+  <div class="card"><h3>Objective only</h3><p>No reasoning, no opinion, no story. What happened, not what the agent said about it.</p></div>
+  <div class="card"><h3>Greppable</h3><p><code>grep '| fail' .trace/*</code> is already error analysis. No database, no daemon, no account.</p></div>
+</div>
+</section>
+
+<section>
+<h2 id="why">Why every AI should write traces</h2>
+<div class="grid">
+  <div class="card"><h3>Error analysis</h3><p>Which tools fail, for which agents, how often, after which steps. The failed steps in order with the exact command and the exact outcome.</p></div>
+  <div class="card"><h3>Self-optimization</h3><p>An agent that can read its own failure history can stop repeating the same mistake. A trace is the training signal you already produce and throw away.</p></div>
+  <div class="card"><h3>One format for every tool</h3><p>Cursor, Trae, Kiro, Claude Code, Codex, Aider: all can emit the same lines. Compare agents on the same task, across vendors.</p></div>
+  <div class="card"><h3>Accountability</h3><p>Reviewers see what was run, not a summary of what went well. A diff tells you what changed; a trace tells you how it got there.</p></div>
+  <div class="card"><h3>Separates fact from story</h3><p>The final answer is prose. The trace is the record. Keeping them apart is what makes the record trustworthy.</p></div>
+  <div class="card"><h3>Costs almost nothing</h3><p>One line per operation. No dependency. A trace is a file you can commit next to the work it describes.</p></div>
+</div>
+
+<div class="rule">
+  <b>The record is sacred: failures are recorded.</b>
+  <p class="muted" style="margin:6px 0 0">A trace that lists only the successes is worse than none, because it looks like evidence. The spec makes this a rule, and the validator enforces it where it can see an omission: a step marked <code>ok</code> next to a non-zero exit code, or a retry whose failure was never recorded, is rejected.</p>
+</div>
+<pre>$ traces validate examples/invalid/2026-10-12-demo-hidden-failure.md
+examples/invalid/2026-10-12-demo-hidden-failure.md:6: error[E040]: hidden failure: status is ok but the result reports exit code 2; record it as 'fail'
+INVALID: 1 files, 1 errors, 0 warnings
+$ echo $?
+1</pre>
+</section>
+
+<section class="gif">
+<h2>How it works</h2>
+<img src="assets/how-it-works.gif" alt="How an agent leaves a TRACES.md record: act, record, validate, analyze" width="1024" height="336">
+<p class="muted"><a href="assets/how-it-works.html">Open the interactive player</a>: play, pause, scrub, step with the arrow keys.</p>
+</section>
+
+<section>
+<h2 id="cli">The reference CLI</h2>
+<p>Python 3.9+, standard library only, MIT. One command, <code>traces</code>.</p>
+<table>
+<tr><th>Command</th><th>What it does</th></tr>
+<tr><td><code>traces init</code></td><td>create <code>.trace/</code> and a trace file for today</td></tr>
+<tr><td><code>traces new</code></td><td>start a trace for a task (reads repo, branch, sha from git)</td></tr>
+<tr><td><code>traces append</code></td><td>add one step: locked, checked, atomic. Refuses a dishonest or out-of-order step</td></tr>
+<tr><td><code>traces run -- cmd</code></td><td>run a command and record it with its real exit code, timeouts and missing commands as <code>fail</code></td></tr>
+<tr><td><code>traces validate</code></td><td>lint a file or folder against the spec; exit 1 on any error (a CI gate)</td></tr>
+<tr><td><code>traces show</code>, <code>cat</code></td><td>render a trace for reading; print it in either form</td></tr>
+<tr><td><code>traces fmt</code></td><td>normalize, and convert between Markdown and JSONL</td></tr>
+<tr><td><code>traces stats</code></td><td>per agent, per tool, failure rate, most failing commands (<code>--json</code>)</td></tr>
+<tr><td><code>traces status</code></td><td>health of a trace folder with alert thresholds for CI (<code>--check</code>)</td></tr>
+</table>
+<pre>$ traces stats examples/*.md
+3 traces, 28 steps: 21 ok, 5 fail, 2 partial (failure rate 17.9%)
+
+by agent
+  claude-code      1 traces     7 steps    1 fail   14.3%
+  codex            1 traces    14 steps    3 fail   21.4%
+  cursor           1 traces     7 steps    1 fail   14.3%
+
+by tool
+  shell             18 steps    5 fail    2 partial   27.8%
+  edit               8 steps    0 fail    0 partial    0.0%
+
+most failing commands
+    2x fail of   3  shell: python -m pytest tests/test_export.py
+    1x fail of   2  shell: npm test</pre>
+<p class="muted">The examples are synthetic. This repository also writes its own traces, in <a href="https://github.com/MaxonT/traces-md/tree/main/.trace"><code>.trace/</code></a>, failures included.</p>
+</section>
+
+<section>
+<h2 id="install">Install</h2>
+<p>Give it to your AI. Paste this into any agent that can run shell commands. It reads the install page, asks before it changes anything, and starts writing traces:</p>
+<pre>Read https://maxont.github.io/traces-md/install and install traces for me.</pre>
+<p>Terminal shortcut (never edits your shell config; add <code>--dry-run</code> to preview):</p>
+<pre>curl -fsSL https://maxont.github.io/traces-md/install.sh | bash</pre>
+<p>Or run the container: <code>docker run --rm ghcr.io/maxont/traces --help</code>. Full instructions for humans and for your AI: <a href="install/">/install</a>.</p>
+</section>
+
+<section>
+<h2>Not this</h2>
+<p>Not a logging framework, not telemetry, not analytics with a backend. No daemon, no server, no account: a trace is a file. It does not record why an agent did something. Reasoning belongs elsewhere.</p>
+</section>
+
+<footer>
+  TRACES.md is MIT licensed. Spec <code>traces/0.1.0</code>. <a href="https://github.com/MaxonT/traces-md">Star it on GitHub</a> if you want agents to be accountable for what they do. <a href="https://github.com/MaxonT/traces-md/blob/main/SPEC.md">SPEC.md</a> · <a href="https://github.com/MaxonT/traces-md/blob/main/north_star.md">north_star.md</a> · <a href="install/">Install</a>
+</footer>
+</div>
+</body>
+</html>

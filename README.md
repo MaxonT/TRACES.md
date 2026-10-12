@@ -1,5 +1,77 @@
-# traces-md
+<p align="center"><img src="docs/banner.svg" alt="TRACES.md banner" width="100%"></p>
 
-> What: placeholder README; the real one (EN) is written in the publish PR.
-> Why: pyproject and the wheel build need a readme file.
-> How: see SPEC.md.
+# TRACES.md: how AI agents record what they did
+
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![Python 3](https://img.shields.io/badge/python-3.9%2B-3776AB.svg?logo=python&logoColor=white)](https://www.python.org/)
+[![Dependencies: stdlib only](https://img.shields.io/badge/dependencies-stdlib%20only-brightgreen.svg)](#)
+[![CI](https://github.com/MaxonT/traces-md/actions/workflows/ci.yml/badge.svg)](https://github.com/MaxonT/traces-md/actions/workflows/ci.yml)
+[![Spec](https://img.shields.io/badge/spec-traces%2F0.1.0-2dd4bf.svg)](SPEC.md)
+[![GitHub stars](https://img.shields.io/github/stars/MaxonT/traces-md.svg?style=social)](https://github.com/MaxonT/traces-md/stargazers)
+
+[中文](README.zh.md) · [Website](https://maxont.github.io/traces-md/) · [Spec](SPEC.md)
+
+**An open standard for how any AI agent records what it did, for error analysis and self-optimization.**
+
+> **Note.** `AGENTS.md` tells an agent how to behave in a repo. **TRACES.md** tells it how to leave a
+> record of what it actually did: one plain, append-only file per task, one line per operation, each
+> saying when, which tool, what it did, and how it ended. The record is **objective** (no reasoning, no
+> story) and **honest** (failures are recorded). You cannot improve what you cannot replay.
+
+If this is the file you wish every agent wrote, please **star the repo**. It is how other agents and people find it.
+
+## Install
+
+**Give it to your AI** (any agent that can run shell commands):
+
+```
+Read https://maxont.github.io/traces-md/install and install traces for me.
+```
+
+**Terminal shortcut** (never edits your shell config; add `--dry-run` to preview):
+
+```sh
+curl -fsSL https://maxont.github.io/traces-md/install.sh | bash
+```
+
+Python 3.9+, standard library only. Or `docker run --rm ghcr.io/maxont/traces --help`.
+
+## The format at a glance
+
+`.trace/2026-10-12-claude-code-fix-date-parser.md`:
+
+```
+task: Fix the failing date parser test
+agent: claude-code
+started: 2026-10-12T09:14:02-05:00
+spec: traces/0.1.0
+
+2026-10-12T09:14:31-05:00 | shell: python -m pytest tests/test_dates.py | run the date tests | fail: exit 1, 1 failed, 11 passed
+2026-10-12T09:15:02-05:00 | edit: src/dates.py | change the parse format string to %Y-%m-%d | ok: 1 line changed
+2026-10-12T09:15:20-05:00 | shell: python -m pytest tests/test_dates.py | run the date tests | ok: exit 0, 12 passed
+```
+
+Every step is `ts | tool | action | result`, result is `ok`, `fail` or `partial` plus a factual detail.
+The same trace exists as JSONL (with a [JSON Schema](schema/trace.schema.json)), and `traces fmt` converts
+between the two without loss. `traces validate` rejects a trace that hides a failure: an `ok` next to a
+non-zero exit code, or a retry whose failure was never recorded.
+
+<p align="center"><img src="docs/assets/how-it-works.gif" alt="How an agent leaves a TRACES.md record: act, record, validate, analyze" width="100%"></p>
+
+[Interactive player](https://maxont.github.io/traces-md/assets/how-it-works.html) · everything else (why, the CLI, the rules) lives on the
+[website](https://maxont.github.io/traces-md/) and in [SPEC.md](SPEC.md).
+
+## Quick use
+
+```sh
+traces init --agent claude-code --task "fix the date parser"   # .trace/ + today's file
+export TRACES_FILE=.trace/<printed file>
+traces run -- python -m pytest                                 # runs it, records the real exit code
+traces append -t "edit: src/dates.py" -a "fix the format string" -s ok -d "1 line changed"
+traces validate                                                # exit 1 if invalid or dishonest
+traces stats                                                   # per agent, per tool, failure rate
+```
+
+This repository writes its own traces in [`.trace/`](.trace), failures included.
+
+MIT licensed. Tests: `python3 -m unittest discover -s tests`.
