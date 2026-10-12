@@ -1,6 +1,6 @@
 <p align="center"><img src="docs/banner.svg" alt="TRACES.md banner" width="100%"></p>
 
-# TRACES.md: how AI agents record what they did
+# TRACES.md: AGENTS.md, but for what agents did
 
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Python 3](https://img.shields.io/badge/python-3.9%2B-3776AB.svg?logo=python&logoColor=white)](https://www.python.org/)
@@ -73,5 +73,13 @@ traces stats                                                   # per agent, per 
 ```
 
 This repository writes its own traces in [`.trace/`](.trace), failures included.
+
+## Standing on the shoulders of
+
+| Project | How it shaped TRACES.md |
+|---|---|
+| [![AGENTS.md stars](https://img.shields.io/github/stars/agentsmd/agents.md?style=social&label=AGENTS.md)](https://github.com/agentsmd/agents.md) | Same shape and adoption model: one plain Markdown convention any agent can follow with no SDK. [SPEC.md section 1](SPEC.md#1-the-idea-in-one-paragraph) opens with it: AGENTS.md tells an agent how to behave, TRACES.md tells it how to leave a record. |
+
+TRACES.md is an independent project, not affiliated with AGENTS.md.
 
 MIT licensed. Tests: `python3 -m unittest discover -s tests`.
