@@ -37,6 +37,8 @@ class CliCase(unittest.TestCase):
         self.old_cwd = os.getcwd()
         os.chdir(self.tmp)
         env = {k: v for k, v in os.environ.items() if not k.startswith("TRACES_")}
+        # an empty home, so a real ~/.ai-sync/traces on the developer's machine never leaks in
+        env["HOME"] = env["USERPROFILE"] = self.tmp
         self.env = mock.patch.dict(os.environ, env, clear=True)
         self.env.start()
 
@@ -157,6 +159,28 @@ class InitNewTests(CliCase):
         header = model.load(Path(out.strip()))[0].header
         self.assertEqual(header["repo"], "x/y")
         self.assertNotIn("branch", header)
+
+    def test_new_never_writes_to_the_central_dir_unless_asked(self):
+        central = Path(self.tmp) / ".ai-sync" / "traces"
+        central.mkdir(parents=True)
+        work = Path(self.tmp) / "work"
+        work.mkdir()
+        os.chdir(work)
+        code, out, err = run("new", "--task", "local", "--agent", "demo", "--no-git")
+        self.assertEqual(code, 0, err)
+        self.assertTrue(os.path.realpath(out.strip()).startswith(os.path.realpath(work)))
+        self.assertEqual(list(central.iterdir()), [])
+        # reads fall back to the central directory when no .trace/ exists above
+        code, out, _ = run("new", "--task", "central", "--agent", "demo", "--no-git",
+                           "--dir", str(central))
+        self.assertEqual(code, 0)
+        shutil.rmtree(work / ".trace")
+        code, out, _ = run("validate")
+        self.assertEqual(code, 0)
+        self.assertIn("valid: 1 files", out)
+        os.environ["TRACES_DIR"] = str(central)
+        code, out, _ = run("new", "--task", "via env", "--agent", "demo", "--no-git")
+        self.assertEqual(Path(out.strip()).parent, central)
 
     def test_finds_nearest_trace_dir_upwards(self):
         self.new()
