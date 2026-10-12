@@ -82,8 +82,8 @@ def file_lock(path, timeout: float = 10.0, stale: float = 60.0) -> Iterator[None
             pass
 
 
-def find_trace_dir(start: Optional[str] = None) -> Optional[Path]:
-    """TRACES_DIR, else the nearest .trace/ walking up from start, else ~/.ai-sync/traces."""
+def find_trace_dir(start: Optional[str] = None, central: bool = True) -> Optional[Path]:
+    """TRACES_DIR, else the nearest .trace/ walking up from start, else (if central) ~/.ai-sync/traces."""
     env = os.environ.get("TRACES_DIR")
     if env:
         return Path(env).expanduser()
@@ -91,8 +91,8 @@ def find_trace_dir(start: Optional[str] = None) -> Optional[Path]:
     for d in [here] + list(here.parents):
         if (d / ".trace").is_dir():
             return d / ".trace"
-    central = Path.home() / ".ai-sync" / "traces"
-    return central if central.is_dir() else None
+    central_dir = Path.home() / ".ai-sync" / "traces"
+    return central_dir if central and central_dir.is_dir() else None
 
 
 def newest_trace(directory: Path) -> Optional[Path]:

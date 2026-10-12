@@ -111,7 +111,9 @@ def cmd_validate(args) -> int:
 
 def cmd_new(args) -> int:
     agent = _agent(args)
-    directory = Path(args.dir).expanduser() if args.dir else (find_trace_dir() or Path(".trace"))
+    # reads fall back to the central dir; a new trace never lands there unless asked (TRACES_DIR/--dir)
+    directory = Path(args.dir).expanduser() if args.dir else (
+        find_trace_dir(central=False) or Path(".trace"))
     meta = {} if args.no_git else writer.git_info(Path.cwd())
     for key, value in (("repo", args.repo), ("branch", args.branch),
                        ("base_sha", args.base_sha), ("continues", args.continues_)):
