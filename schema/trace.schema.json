@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://raw.githubusercontent.com/MaxonT/traces-md/main/schema/trace.schema.json",
+  "$id": "https://raw.githubusercontent.com/MaxonT/traces.md/main/schema/trace.schema.json",
   "title": "TRACES.md JSONL line, spec traces/0.1.0",
   "description": "Each line of a .jsonl trace is one JSON object. The first line is a header object (type 'trace'); every other line is a step object (type 'step'). See SPEC.md section 6.",
   "oneOf": [
