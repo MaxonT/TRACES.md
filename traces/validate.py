@@ -87,6 +87,12 @@ def check_step_fields(s: model.Step, ts_prev: Optional[model.Step] = None) -> Li
     return out
 
 
+def is_wait(s: model.Step) -> bool:
+    """A step that records idle time (SPEC.md 4.3): tool is `wait` or starts with `wait:`."""
+    tool = s.tool.strip().lower()
+    return tool == "wait" or tool.startswith("wait:")
+
+
 def check_sequence(trace: Trace, issues: List[Issue]) -> None:
     started = model.parse_ts(trace.started)
     prev_when = started
@@ -100,9 +106,11 @@ def check_sequence(trace: Trace, issues: List[Issue]) -> None:
                 code = "E033" if prev_label == "started" else "E032"
                 issues.append(Issue(code, "timestamp %s is earlier than %s (%s)"
                                     % (s.ts, prev_label, prev_when.isoformat()), s.line or None))
-            elif prev_label != "started" and (when - prev_when).total_seconds() > GAP_SECONDS:
+            elif (prev_label != "started" and not is_wait(s)
+                  and (when - prev_when).total_seconds() > GAP_SECONDS):
                 issues.append(Issue("W003", "%d minutes since the previous step: possible "
-                                    "unrecorded work" % ((when - prev_when).total_seconds() // 60),
+                                    "unrecorded work (if it was idle time, record a 'wait' step "
+                                    "when it ends)" % ((when - prev_when).total_seconds() // 60),
                                     s.line or None))
         if when is not None:
             prev_when, prev_label = when, "the previous step"
