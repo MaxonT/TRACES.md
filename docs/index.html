@@ -2,7 +2,7 @@
 <!--
 What: the TRACES.md website home page (GitHub Pages from /docs), laid out like agents.md: hero, example, why, examples, how to use, about, FAQ.
 Why: a stranger should get the idea in 30 seconds and be able to adopt it in one more minute.
-How: static, self-contained (no JS, no network fonts). Served at https://maxont.github.io/traces.md/
+How: static, self-contained (no JS, no network fonts). Served at https://maxont.github.io/TRACES.md/
 -->
 <html lang="en">
 <head>
@@ -13,10 +13,16 @@ How: static, self-contained (no JS, no network fonts). Served at https://maxont.
 <meta property="og:title" content="TRACES.md: a simple, open format for recording what AI agents did">
 <meta property="og:description" content="AGENTS.md says how an agent should behave. TRACES.md records what it actually did. One plain file per task, failures included.">
 <meta property="og:type" content="website">
-<meta property="og:url" content="https://maxont.github.io/traces.md/">
-<meta property="og:image" content="https://maxont.github.io/traces.md/banner.svg">
+<meta property="og:url" content="https://maxont.github.io/TRACES.md/">
+<meta property="og:image" content="https://maxont.github.io/TRACES.md/social-card.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="TRACES.md: AGENTS.md, but for what agents did. One line per step, failures included.">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="canonical" href="https://maxont.github.io/traces.md/">
+<meta name="twitter:title" content="TRACES.md: a simple, open format for recording what AI agents did">
+<meta name="twitter:description" content="AGENTS.md says how an agent should behave. TRACES.md records what it actually did. One plain file per task, failures included.">
+<meta name="twitter:image" content="https://maxont.github.io/TRACES.md/social-card.png">
+<link rel="canonical" href="https://maxont.github.io/TRACES.md/">
 <style>
 :root{--bg:#fafbfb;--card:#fff;--ink:#16201f;--muted:#5b6b69;--line:#dfe6e5;--soft:#eef4f3;--accent:#0f766e;--accent2:#0d9488;--code:#0d1117;--codeink:#d7e3e1;--ok:#2dd4bf;--fail:#ff7b72;--part:#f0b429;--ts:#7d8f8c}
 @media (prefers-color-scheme:dark){:root{--bg:#0b0f14;--card:#121922;--ink:#e6eeed;--muted:#97a8a5;--line:#243038;--soft:#101820;--accent:#2dd4bf;--accent2:#9af7e5;--code:#070a0e}}
@@ -80,8 +86,8 @@ footer{margin:90px 0 40px;padding-top:24px;border-top:1px solid var(--line);colo
   <a href="#cli">CLI</a>
   <a href="#about">About</a>
   <a href="#faq">FAQ</a>
-  <a href="https://github.com/MaxonT/traces.md/blob/main/SPEC.md">Spec</a>
-  <a href="https://github.com/MaxonT/traces.md">GitHub</a>
+  <a href="https://github.com/MaxonT/TRACES.md/blob/main/SPEC.md">Spec</a>
+  <a href="https://github.com/MaxonT/TRACES.md">GitHub</a>
 </nav>
 
 <header class="hero">
@@ -91,7 +97,7 @@ footer{margin:90px 0 40px;padding-top:24px;border-top:1px solid var(--line);colo
   <p class="sub">Think of TRACES.md as a <strong>flight recorder for agents</strong>: a dedicated, predictable place where every tool call, command and result is written down, objectively, failures included, so errors can be analyzed and agents can improve.</p>
   <div class="cta">
     <a class="btn primary" href="#examples">Explore Examples</a>
-    <a class="btn" href="https://github.com/MaxonT/traces.md">View on GitHub</a>
+    <a class="btn" href="https://github.com/MaxonT/TRACES.md">View on GitHub</a>
     <a class="btn" href="install/">Install in 30 seconds</a>
   </div>
 <pre><span class="k"># .trace/2026-10-12-claude-code-fix-date-parser.md</span>
@@ -142,7 +148,7 @@ $ echo $?
 
 <section>
 <h2>One TRACES.md works across many agents</h2>
-<p>It is a plain file, so any agent that can write a file or run a shell command can emit it. No integration needed: point your agent at <a href="https://github.com/MaxonT/traces.md/blob/main/SPEC.md">SPEC.md</a>, or give it the install page.</p>
+<p>It is a plain file, so any agent that can write a file or run a shell command can emit it. No integration needed: point your agent at <a href="https://github.com/MaxonT/TRACES.md/blob/main/SPEC.md">SPEC.md</a>, or give it the install page.</p>
 <div class="chips">
   <span class="chip">Claude Code</span><span class="chip">Cursor</span><span class="chip">Trae</span><span class="chip">Kiro</span><span class="chip">Codex</span><span class="chip">Aider</span><span class="chip">Gemini CLI</span><span class="chip">Copilot coding agent</span><span class="chip">Windsurf</span><span class="chip">Zed</span><span class="chip">your own agent</span>
 </div>
@@ -151,11 +157,11 @@ $ echo $?
 
 <section>
 <h2 id="examples">Examples</h2>
-<p>All three are synthetic, with the failures real traces have. The machine form (JSONL, with a <a href="https://github.com/MaxonT/traces.md/blob/main/schema/trace.schema.json">JSON Schema</a>) is the same trace, one JSON object per line.</p>
+<p>All three are synthetic, with the failures real traces have. The machine form (JSONL, with a <a href="https://github.com/MaxonT/TRACES.md/blob/main/schema/trace.schema.json">JSON Schema</a>) is the same trace, one JSON object per line.</p>
 
 <div class="ex">
 <h3>claude-code · Fix the failing date parser test</h3>
-<p class="meta">7 steps, 1 fail, 1 partial · <a href="https://github.com/MaxonT/traces.md/blob/main/examples/2026-10-12-claude-code-fix-date-parser.md">full file</a></p>
+<p class="meta">7 steps, 1 fail, 1 partial · <a href="https://github.com/MaxonT/TRACES.md/blob/main/examples/2026-10-12-claude-code-fix-date-parser.md">full file</a></p>
 <pre><span class="ts">2026-10-12T09:14:05-05:00</span> | shell: git status | list working tree changes | <span class="ok">ok</span>: clean
 <span class="ts">2026-10-12T09:14:31-05:00</span> | shell: python -m pytest tests/test_dates.py | run the date tests | <span class="fail">fail</span>: exit 1, 1 failed, 11 passed
 <span class="ts">2026-10-12T09:14:48-05:00</span> | read: src/dates.py | read the date parser | <span class="ok">ok</span>: 64 lines
@@ -167,7 +173,7 @@ $ echo $?
 
 <div class="ex">
 <h3>codex · Add CSV export to the report command</h3>
-<p class="meta">14 steps, 3 fail · a failure, a retry, a lint failure, then green · <a href="https://github.com/MaxonT/traces.md/blob/main/examples/2026-10-11-codex-add-csv-export.md">full file</a> (excerpt below)</p>
+<p class="meta">14 steps, 3 fail · a failure, a retry, a lint failure, then green · <a href="https://github.com/MaxonT/TRACES.md/blob/main/examples/2026-10-11-codex-add-csv-export.md">full file</a> (excerpt below)</p>
 <pre><span class="ts">2026-10-11T14:04:20-05:00</span> | shell: python -m pytest tests/test_export.py | run the export tests | <span class="fail">fail</span>: exit 1, ImportError: cannot import name 'write_csv' from 'reports.export'
 <span class="ts">2026-10-11T14:04:51-05:00</span> | edit: reports/__init__.py | export write_csv from the package | <span class="ok">ok</span>: 1 line changed
 <span class="ts">2026-10-11T14:05:12-05:00</span> | shell: python -m pytest tests/test_export.py | retry the export tests | <span class="fail">fail</span>: exit 1, 2 failed: test_unicode_header, test_quote_comma
@@ -176,13 +182,13 @@ $ echo $?
 
 <div class="ex">
 <h3>cursor · Rename config keys across the repo</h3>
-<p class="meta">8 steps, 1 fail, 1 partial · a read-only file and a fixture nobody remembered · <a href="https://github.com/MaxonT/traces.md/blob/main/examples/2026-10-10-cursor-rename-config-keys.md">full file</a> (excerpt below)</p>
+<p class="meta">8 steps, 1 fail, 1 partial · a read-only file and a fixture nobody remembered · <a href="https://github.com/MaxonT/TRACES.md/blob/main/examples/2026-10-10-cursor-rename-config-keys.md">full file</a> (excerpt below)</p>
 <pre><span class="ts">2026-10-10T11:30:40-07:00</span> | shell: sed -i '' 's/timeoutMs/timeout_ms/g' src/*.ts | rename the key in the sources | <span class="part">partial</span>: 5 of 6 files changed, src/legacy.ts is read-only
 <span class="ts">2026-10-10T11:31:44-07:00</span> | shell: npm test | run the test suite | <span class="fail">fail</span>: exit 1, 4 failed: config.parse.spec.ts
 <span class="ts">2026-10-10T11:33:02-07:00</span> | shell: npm test | run the test suite | <span class="ok">ok</span>: exit 0, 88 passed</pre>
 </div>
 
-<p>Want a real one? This repository writes its own traces, failures included: <a href="https://github.com/MaxonT/traces.md/tree/main/.trace"><code>.trace/</code></a>.</p>
+<p>Want a real one? This repository writes its own traces, failures included: <a href="https://github.com/MaxonT/TRACES.md/tree/main/.trace"><code>.trace/</code></a>.</p>
 </section>
 
 <section>
@@ -194,7 +200,7 @@ $ echo $?
   <li><b>Validate it, and analyze it</b><span><code>traces validate --strict .trace</code> in CI keeps traces well formed and honest. <code>traces stats</code> turns a folder of traces into per-agent, per-tool failure rates.</span></li>
 </ol>
 <div class="gif">
-<img src="assets/how-it-works.gif" alt="How an agent leaves a TRACES.md record: act, record, validate, analyze" width="1024" height="336">
+<img src="assets/how-it-works.gif" alt="How an agent leaves a TRACES.md record: act, record, validate, analyze, improve" width="1024" height="336">
 <p class="muted"><a href="assets/how-it-works.html">Open the interactive player</a>: play, pause, scrub, step with the arrow keys.</p>
 </div>
 </section>
@@ -231,33 +237,33 @@ most failing commands
     1x fail of   2  shell: npm test</pre>
 <h3 id="install" style="margin-top:28px">Install</h3>
 <p>Give it to your AI. Paste this into any agent that can run shell commands. It reads the install page, asks before it changes anything, and starts writing traces:</p>
-<pre>Read https://maxont.github.io/traces.md/install and install traces for me.</pre>
+<pre>Read https://maxont.github.io/TRACES.md/install and install traces for me.</pre>
 <p>Terminal shortcut (never edits your shell config; add <code>--dry-run</code> to preview):</p>
-<pre>curl -fsSL https://maxont.github.io/traces.md/install.sh | bash</pre>
+<pre>curl -fsSL https://maxont.github.io/TRACES.md/install.sh | bash</pre>
 <p>Or run the container: <code>docker run --rm ghcr.io/maxont/traces --help</code>. Full instructions for humans and for your AI: <a href="install/">/install</a>.</p>
 </section>
 
 <section>
 <h2 id="about">About</h2>
 <p>TRACES.md came out of day-to-day work with several coding agents (Cursor, Trae, Kiro, Claude Code, Codex) on the same repositories: five tools, five different ways of saying what they had done, and no way to compare their failures. One shared rule, "every agent writes an objective trace", turned into this format.</p>
-<p>It is maintained as an open format that should benefit anyone running agents, regardless of which one. MIT licensed. Spec <code>traces/0.1.0</code> is a draft: issues and pull requests on <a href="https://github.com/MaxonT/traces.md">GitHub</a> are welcome, and <a href="https://github.com/MaxonT/traces.md/blob/main/north_star.md">north_star.md</a> says what the project will and will not become.</p>
+<p>It is maintained as an open format that should benefit anyone running agents, regardless of which one. MIT licensed. Spec <code>traces/0.1.0</code> is a draft: issues and pull requests on <a href="https://github.com/MaxonT/TRACES.md">GitHub</a> are welcome, and <a href="https://github.com/MaxonT/TRACES.md/blob/main/north_star.md">north_star.md</a> says what the project will and will not become.</p>
 <p>Not a logging framework, not telemetry, not analytics with a backend. No daemon, no server, no account: a trace is a file. It does not record why an agent did something. Reasoning belongs elsewhere.</p>
 </section>
 
 <section>
 <h2 id="faq">FAQ</h2>
-<details><summary>Are there required fields?</summary><p>Yes, a few. The header needs <code>task</code>, <code>agent</code> and <code>started</code>; every step line needs exactly four fields: <code>ts | tool | action | result</code>. Everything else is optional. <a href="https://github.com/MaxonT/traces.md/blob/main/SPEC.md">SPEC.md</a> is short.</p></details>
+<details><summary>Are there required fields?</summary><p>Yes, a few. The header needs <code>task</code>, <code>agent</code> and <code>started</code>; every step line needs exactly four fields: <code>ts | tool | action | result</code>. Everything else is optional. <a href="https://github.com/MaxonT/TRACES.md/blob/main/SPEC.md">SPEC.md</a> is short.</p></details>
 <details><summary>Does a trace contain the agent's reasoning?</summary><p>No. A step records what tool was used, what it did and how it ended. Reasoning, opinions and narrative do not belong in a trace, and the validator warns about them.</p></details>
 <details><summary>What if a step failed?</summary><p>Record it as <code>fail</code> with the exit code or the head of the error. A later step that repairs the problem is a new step; the failed one keeps its status. A trace that hides failures is non-compliant.</p></details>
 <details><summary>Can I edit a trace later?</summary><p>You can append. A recorded step is never edited or deleted; a mistake is corrected by a later step. This is what keeps traces usable as evidence.</p></details>
 <details><summary>Should I commit traces?</summary><p>Usually yes, next to the work they describe. If you do not want them in history, add <code>.trace/</code> to <code>.gitignore</code>; the format does not change. Never put secrets in a trace: write <code>[redacted]</code>.</p></details>
 <details><summary>Is it a replacement for logs or telemetry?</summary><p>No. Logs are for services. A trace is for one agent working on one task, readable by a person in a minute and by a script without guessing.</p></details>
 <details><summary>How do I get the machine form?</summary><p><code>traces fmt --to jsonl -w .trace/&lt;file&gt;.md</code> writes the JSONL twin next to it. The conversion is lossless in both directions. The JSON Schema is published in the repository.</p></details>
-<details><summary>How do I make my agent write traces?</summary><p>Give it the install page (<code>Read https://maxont.github.io/traces.md/install and install traces for me.</code>), or add one line to your <code>AGENTS.md</code>: "For every task, write a trace under <code>.trace/</code> following SPEC.md."</p></details>
+<details><summary>How do I make my agent write traces?</summary><p>Give it the install page (<code>Read https://maxont.github.io/TRACES.md/install and install traces for me.</code>), or add one line to your <code>AGENTS.md</code>: "For every task, write a trace under <code>.trace/</code> following SPEC.md."</p></details>
 </section>
 
 <footer>
-  TRACES.md is MIT licensed. Spec <code>traces/0.1.0</code>. <a href="https://github.com/MaxonT/traces.md">Star it on GitHub</a> if you want agents to be accountable for what they do. <a href="https://github.com/MaxonT/traces.md/blob/main/SPEC.md">SPEC.md</a> · <a href="https://github.com/MaxonT/traces.md/blob/main/north_star.md">north_star.md</a> · <a href="install/">Install</a>
+  TRACES.md is MIT licensed. Spec <code>traces/0.1.0</code>. <a href="https://github.com/MaxonT/TRACES.md">Star it on GitHub</a> if you want agents to be accountable for what they do. <a href="https://github.com/MaxonT/TRACES.md/blob/main/SPEC.md">SPEC.md</a> · <a href="https://github.com/MaxonT/TRACES.md/blob/main/north_star.md">north_star.md</a> · <a href="install/">Install</a>
 </footer>
 </div>
 </body>

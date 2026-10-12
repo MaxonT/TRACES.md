@@ -135,7 +135,7 @@ line is a step object.
   `result` has `status` and, optionally, `detail`. Values have the same meaning and the same
   rules as in the Markdown form (no escaping is needed: JSON has its own).
 - The JSON Schema is [`schema/trace.schema.json`](schema/trace.schema.json)
-  (`https://raw.githubusercontent.com/MaxonT/traces.md/main/schema/trace.schema.json`).
+  (`https://raw.githubusercontent.com/MaxonT/TRACES.md/main/schema/trace.schema.json`).
 - Canonical JSONL uses compact separators, the key order above, and `ensure_ascii` off.
 - The file extension is `.jsonl`; the rest of the name follows section 3.
 

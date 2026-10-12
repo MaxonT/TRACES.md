@@ -2,7 +2,7 @@
 # What: installer for traces.md. Installs the `traces` command from GitHub.
 # Why: the terminal shortcut on the install page; one line, safe to read first.
 # How:
-#   curl -fsSL https://maxont.github.io/traces.md/install.sh | bash
+#   curl -fsSL https://maxont.github.io/TRACES.md/install.sh | bash
 #   bash install.sh --dry-run        # show what would happen, change nothing
 #
 # It installs the Python package with uv, pipx or pip --user.
@@ -10,7 +10,7 @@
 # Generated from the-greatness-lab publish/templates/install.sh.
 set -euo pipefail
 
-REPO="https://github.com/MaxonT/traces.md"
+REPO="https://github.com/MaxonT/TRACES.md"
 REF="main"
 DRY=0
 

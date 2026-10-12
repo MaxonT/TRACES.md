@@ -40,3 +40,28 @@ x-timestamps: backfilled steps use git, GitHub API (PR and Actions run times), f
 2026-10-12T18:25:15-05:00 | shell: mv the trace to traces-md.wt-wait; git worktree remove ../traces-md.wt-refine; git branch -D feat/refine-lineage-social-card | move this trace into the build branch and drop the empty refine worktree | ok: refine worktree recreated later on the new main
 2026-10-12T18:25:15-05:00 | edit: .trace/2026-10-12-trae-github2-compliance.md (backfill block) | add two wait steps to the uncommitted backfill block and say so in x-backfill | ok: 2 steps
 2026-10-12T18:25:18-05:00 | shell: /tmp/tmd-venv/bin/python -W error::ResourceWarning -m unittest discover -s tests | run the suite with setuptools available | ok: exit 0
+2026-10-12T18:25:32-05:00 | shell: git commit; git push -u origin feat/build-wait-step; gh pr create | commit the wait-step change and open PR 6 | ok: https://github.com/MaxonT/TRACES.md/pull/6
+2026-10-12T18:26:20-05:00 | shell: gh pr checks feat/build-wait-step | read the CI results | ok: test 3.9, 3.11 and 3.13 pass
+2026-10-12T18:26:33-05:00 | shell: gh pr merge 6 --squash (main checkout) | merge PR 6 | ok: dfeb7ed
+2026-10-12T18:26:35-05:00 | shell: gh repo view MaxonT/TRACES.md; curl https://maxont.github.io/{traces.md,TRACES.md}/ | check repo metadata and the site | partial: repo was renamed to TRACES.md outside this goal (homepage https://maxont.github.io/TRACES.md/, 16 topics); /traces.md/ HTTP 404, /TRACES.md/ HTTP 200
+2026-10-12T18:27:00-05:00 | shell: aisync tail; gh api repos/MaxonT/TRACES.md/events | look up who renamed the repo | partial: no aisync entry; GitHub events show only PR events by MaxonT; rename source not recorded
+2026-10-12T18:27:10-05:00 | shell: gh api repos/MaxonT/TRACES.md/issues/6/comments | read the review bot comments on PR 6 and PR 5 | ok: Codex review running on 6, completed with no findings on 5
+2026-10-12T18:27:30-05:00 | shell: git worktree add ../traces-md.wt-refine -b feat/refine-lineage-social-card origin/main | recreate the refine worktree on the new main | ok: base dfeb7ed
+2026-10-12T18:27:40-05:00 | write: lineage.json | write the lineage manifest: AGENTS.md as the headline analogy credit, topics with traces first | ok: created
+2026-10-12T18:27:45-05:00 | shell: python3 -m refine.lineage verify; render | verify and render the lineage manifest | fail: exit 1, JSONDecodeError: Expecting value (ran in parallel with the write, file still empty)
+2026-10-12T18:28:10-05:00 | shell: python3 -m refine.lineage verify; render --out /tmp/tmd-lineage | verify and render the lineage manifest again | ok: lineage ok; 7 files: description, topics, headlines, readme hook, og.svg, outreach, report
+2026-10-12T18:29:00-05:00 | shell: python3 -c _mode_for_seed(...) | compute the deterministic GIF mode per candidate slug | ok: traces radial, traces.md river, TRACES.md stack; seed traces kept (same seed as the banner)
+2026-10-12T18:29:20-05:00 | read: refine/pipeline_gif.py _mode_radial | read the radial layout | ok: 4 stages put the bottom node at y 399 with a 34 px hexagon on a 420 px canvas: clipped
+2026-10-12T18:29:40-05:00 | shell: python3 -m refine.pipeline_gif --seed traces --dwell 0.45 --html (EN, ZH, 5 stages) | regenerate both GIFs and players in the deterministic mode with an added Improve stage | ok: mode radial, 50 frames, 150 and 151 KB
+2026-10-12T18:29:50-05:00 | shell: ffmpeg select frames 9,19,29,39,49 (EN, ZH) | extract frames to check by eye | ok: all 5 nodes inside the frame, labels readable
+2026-10-12T18:30:20-05:00 | shell: Chrome --headless --screenshot og.html (1200x630) | render the lineage og.svg to a PNG social card | partial: 1200x630 PNG; the tagline line ran past the right edge
+2026-10-12T18:30:50-05:00 | edit: lineage.json tagline; refine.lineage render; Chrome --headless --screenshot | shorten the tagline and re-render the social card | ok: docs/social-card.png 1200x630, all text inside
+2026-10-12T18:31:10-05:00 | shell: git ls-files \\\| xargs sed (maxont.github.io/traces.md, MaxonT/traces.md -> TRACES.md) | point every link at the renamed repo and site | ok: 12 files
+2026-10-12T18:31:20-05:00 | shell: aisync claim --agent trae --project traces-md | claim the extra files the URL fix touches | ok: claimed until 20:31
+2026-10-12T18:31:40-05:00 | edit: docs/index.html, docs/install/index.html, README.md, README.zh.md | add og:image and twitter:image (PNG), the AGENTS.md credit section and the 5-stage GIF alt text | ok: 4 files
+2026-10-12T18:32:00-05:00 | edit: tests/test_site.py | test the social card, lineage manifest, credit section, radial players and retired links | ok: 5 tests
+2026-10-12T18:32:20-05:00 | shell: /tmp/tmd-venv/bin/python -m unittest discover -s tests | run the suite | fail: exit 1, 135 tests, 1 failed: the player HTML does not contain the word radial
+2026-10-12T18:32:35-05:00 | edit: tests/test_site.py | check the radial geometry (rotated core labelled pipeline, 50 frames, no circle) instead of a word | ok: 1 test changed
+2026-10-12T18:32:50-05:00 | shell: /tmp/tmd-venv/bin/python -m unittest discover -s tests | run the suite | ok: 135 tests
+2026-10-12T18:32:52-05:00 | shell: python3 -c seo_audit(lineage topics, lineage description, local README) | run the lab SEO audit on the planned metadata | ok: 4 checks pass, no warnings
+2026-10-12T18:33:43-05:00 | shell: aisync log --agent trae --project traces-md | log PR 6, late: the log was missed right after the 18:26 merge | ok: logged
