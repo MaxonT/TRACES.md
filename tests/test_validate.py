@@ -150,6 +150,21 @@ class RuleTests(unittest.TestCase):
                        "2026-10-12T10:45:05-05:00 | t | b | ok\n")
         self.assertEqual(codes_of(text)[0], ["W003"])
 
+    def test_gap_ending_in_a_wait_step_is_accounted_for(self):
+        for tool in ("wait", "wait: owner reply", "Wait"):
+            text = HEAD + ("2026-10-12T10:00:05-05:00 | t | a | ok\n"
+                           "2026-10-12T10:45:05-05:00 | %s | wait for review | ok: idle 45 min\n"
+                           "2026-10-12T10:45:30-05:00 | t | b | ok\n" % tool)
+            self.assertEqual(codes_of(text)[0], [], tool)
+        # a wait step only covers the gap it closes, not a later one
+        text = HEAD + ("2026-10-12T10:00:05-05:00 | wait | wait for review | ok\n"
+                       "2026-10-12T10:45:05-05:00 | t | b | ok\n")
+        self.assertEqual(codes_of(text)[0], ["W003"])
+        # a tool that merely starts with the letters "wait" is not a wait step
+        text = HEAD + ("2026-10-12T10:00:05-05:00 | t | a | ok\n"
+                       "2026-10-12T10:45:05-05:00 | waitress-serve | start the server | ok\n")
+        self.assertEqual(codes_of(text)[0], ["W003"])
+
     def test_no_steps_warning(self):
         self.assertEqual(codes_of(HEAD)[0], ["W005"])
 
