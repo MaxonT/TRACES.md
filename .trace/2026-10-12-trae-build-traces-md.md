@@ -76,3 +76,24 @@ x-timestamps: steps that ran a shell command use the shell clock or git; write s
 2026-10-12T16:37:40-05:00 | shell: /tmp/tmd-venv/bin/python -W error::ResourceWarning -m unittest discover -s tests | run the suite with setuptools available | ok: exit 0
 2026-10-12T16:37:40-05:00 | shell: bash docs/install.sh --dry-run | dry-run the install script | ok: exit 0
 2026-10-12T16:37:40-05:00 | shell: docker build -t traces-local . | try to build the container image locally | fail: exit 1, Cannot connect to the Docker daemon at unix:///var/run/docker.sock. Is the docker daemon running?
+2026-10-12T16:37:55-05:00 | shell: git commit; git push -u origin feat/publish-site; gh pr create | commit the publish flow and open PR 2 | ok: https://github.com/MaxonT/traces-md/pull/2
+2026-10-12T16:38:38-05:00 | shell: gh pr checks 2 | read the CI results | ok: test 3.9, 3.11 and 3.13 pass
+2026-10-12T16:38:44-05:00 | shell: gh pr merge 2 --squash | merge PR 2 from the main checkout | ok: f014af1
+2026-10-12T16:38:46-05:00 | shell: gh api -X POST repos/MaxonT/traces-md/pages (source main /docs) | enable GitHub Pages from /docs | ok: html_url https://maxont.github.io/traces-md/
+2026-10-12T16:38:52-05:00 | shell: git tag -a v0.1.0 f014af1; git push origin v0.1.0 | tag the release | ok: new tag v0.1.0
+2026-10-12T16:38:55-05:00 | shell: gh repo edit MaxonT/traces-md --homepage --add-topic (8 topics) | set homepage and topics | ok: done
+2026-10-12T16:39:00-05:00 | shell: curl https://maxont.github.io/traces-md/ | poll the live site right after enabling Pages | fail: HTTP 404 (Pages build still running)
+2026-10-12T16:39:25-05:00 | shell: curl https://maxont.github.io/traces-md/ | poll the live site again | ok: HTTP 200
+2026-10-12T16:39:34-05:00 | ci: release workflow v0.1.0 | wait for the tag-triggered release workflow | ok: success in 39s: tests, wheel and sdist, GitHub Release, ghcr image pushed and smoke-run
+2026-10-12T16:40:30-05:00 | shell: gh release view v0.1.0 | check the GitHub Release assets | ok: traces_md-0.1.0-py3-none-any.whl, traces_md-0.1.0.tar.gz
+2026-10-12T16:40:40-05:00 | shell: gh api /users/MaxonT/packages/container/traces | check the ghcr package through the API | fail: HTTP 403, token lacks read:packages scope
+2026-10-12T16:40:50-05:00 | shell: curl https://ghcr.io/v2/maxont/traces/manifests/0.1.0 (anonymous token) | check the ghcr image manifests without credentials | ok: tags 0.1.0 and latest: HTTP 200
+2026-10-12T16:41:00-05:00 | shell: curl https://maxont.github.io/traces-md/{install/,install.sh,banner.svg,assets/how-it-works.gif,assets/how-it-works.html} | check the live site paths | ok: 5 paths HTTP 200; /install redirects 301 to /install/
+2026-10-12T16:44:20-05:00 | shell: pip install <release wheel URL> in a fresh venv; traces --version; traces init; traces validate | install the released wheel and run it | partial: installed and ran; validate printed W005 for the new empty trace
+2026-10-12T16:44:40-05:00 | shell: python3 -m refine.polish seo --gh MaxonT/traces-md | run the lab SEO audit | partial: 3 checks pass; primary topic agents-md is not in the H1
+2026-10-12T16:45:20-05:00 | shell: python3 -m unittest discover -s tests | run the suite after creating the release trace | fail: exit 1, 124 tests, 1 failed: test_validate_with_nothing_to_check_is_usage_error (a real ~/.ai-sync/traces appeared and the test fell back to it)
+2026-10-12T16:46:10-05:00 | shell: ls ~/.ai-sync/traces | inspect the shared trace directory | partial: 12 files named 2026-10-12-demo-* written there by this repo's own tests (traces new fell back to the central directory)
+2026-10-12T16:46:40-05:00 | delete: 12 files ~/.ai-sync/traces/2026-10-12-demo-*.md | remove the test files this repo wrote into the shared directory | ok: 12 files deleted, the kirocrew trace left untouched
+2026-10-12T16:47:05-05:00 | edit: traces/fileio.py, traces/cli.py, tests/test_cli.py | make traces new write to the central directory only when asked, and give CLI tests an empty HOME | ok: 3 files
+2026-10-12T16:47:05-05:00 | shell: /tmp/tmd-venv/bin/python -W error::ResourceWarning -m unittest discover -s tests | run the suite with setuptools available | ok: exit 0
+2026-10-12T16:47:05-05:00 | shell: python3.11 -m unittest discover -s tests | run the suite on Python 3.11 | ok: exit 0
