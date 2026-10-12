@@ -1,6 +1,6 @@
 <p align="center"><img src="docs/banner.zh.svg" alt="TRACES.md 横幅" width="100%"></p>
 
-# TRACES.md：AI agent 如何记录自己做了什么
+# TRACES.md：记录“agent 做了什么”的 AGENTS.md
 
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Python 3](https://img.shields.io/badge/python-3.9%2B-3776AB.svg?logo=python&logoColor=white)](https://www.python.org/)
@@ -71,5 +71,13 @@ traces stats                                                   # 按 agent、按
 ```
 
 本仓库也在 [`.trace/`](.trace) 里记录自己的 trace，包括失败。
+
+## 站在巨人的肩膀上
+
+| 项目 | 它如何影响了 TRACES.md |
+|---|---|
+| [![AGENTS.md stars](https://img.shields.io/github/stars/agentsmd/agents.md?style=social&label=AGENTS.md)](https://github.com/agentsmd/agents.md) | 同样的形态和推广方式：一份纯 Markdown 约定，任何 agent 不装 SDK 就能照做。[SPEC.md 第 1 节](SPEC.md#1-the-idea-in-one-paragraph) 开篇就是这个类比：AGENTS.md 告诉 agent 该怎么做，TRACES.md 告诉 agent 如何留下记录。 |
+
+TRACES.md 是独立项目，与 AGENTS.md 没有隶属关系。
 
 MIT 许可。测试：`python3 -m unittest discover -s tests`。
