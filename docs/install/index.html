@@ -1,6 +1,6 @@
 <!doctype html>
 <!--
-What: the "give it to your AI" install page for traces.md (served at https://maxont.github.io/traces.md/install).
+What: the "give it to your AI" install page for traces.md (served at https://maxont.github.io/TRACES.md/install).
 Why: github2 repos install by handing one sentence to the user's AI agent.
 How: publish it at docs/install/index.html (GitHub Pages from /docs), next to docs/install.sh.
 Generated from the-greatness-lab publish/templates/install.html. Replace the
@@ -12,6 +12,12 @@ Generated from the-greatness-lab publish/templates/install.html. Replace the
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Install traces.md</title>
 <meta name="description" content="Install traces.md by giving this page to your AI. TRACES.md is a simple, open format for recording what AI agents did: objective, append-only, failures included. This package ships the reference CLI.">
+<meta property="og:title" content="Install TRACES.md">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://maxont.github.io/TRACES.md/install/">
+<meta property="og:image" content="https://maxont.github.io/TRACES.md/social-card.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://maxont.github.io/TRACES.md/social-card.png">
 <style>
 :root{--bg:#fbf8f3;--card:#fff;--ink:#2a2522;--muted:#6d655f;--line:#e7dfd5;--soft:#f4eee5;--accent:#0f766e;--code:#1e1b19;--codeink:#f2ece4}
 @media (prefers-color-scheme:dark){:root{--bg:#161418;--card:#211e25;--ink:#eee9e4;--muted:#a69da0;--line:#38333d;--soft:#1c1a20;--accent:#2dd4bf;--code:#0f0e11}}
@@ -36,7 +42,7 @@ nav a{margin-right:16px;font-size:14px;text-decoration:none}
 </head>
 <body>
 <div class="wrap">
-<nav><a href="../">Home</a><a href="https://github.com/MaxonT/traces.md">GitHub</a></nav>
+<nav><a href="../">Home</a><a href="https://github.com/MaxonT/TRACES.md">GitHub</a></nav>
 
 <h1>Install traces.md</h1>
 <p class="lead">TRACES.md is a simple, open format for recording what AI agents did: objective, append-only, failures included. This package ships the reference CLI. You install it by handing this page to your AI.</p>
@@ -44,10 +50,10 @@ nav a{margin-right:16px;font-size:14px;text-decoration:none}
 <h2>For humans</h2>
 <div class="card">
 <p>Paste this into your AI coding agent (Claude Code, Cursor, Codex, or any capable agent). It reads this page and sets everything up, asking before it changes anything.</p>
-<pre>Read https://maxont.github.io/traces.md/install and install traces for me.</pre>
+<pre>Read https://maxont.github.io/TRACES.md/install and install traces for me.</pre>
 <p>You need Python 3.9 or newer and an agent that can run shell commands.</p>
 <p class="muted">Prefer the terminal? One line installs the <code>traces</code> command (it never edits your shell config):</p>
-<pre>curl -fsSL https://maxont.github.io/traces.md/install.sh | bash</pre>
+<pre>curl -fsSL https://maxont.github.io/TRACES.md/install.sh | bash</pre>
 <p class="muted">Want to read the script first? <a href="../install.sh">install.sh</a>. Add <code>--dry-run</code> to see what it would do without changing anything.</p>
 </div>
 
@@ -56,7 +62,7 @@ nav a{margin-right:16px;font-size:14px;text-decoration:none}
 <p>You are the AI agent the user gave this page to. Everything below is addressed to you. Follow it in order. If you cannot do a step, say so plainly instead of pretending.</p>
 
 <h3>0. What you are installing</h3>
-<p>TRACES.md is a simple, open format for recording what AI agents did: objective, append-only, failures included. This package ships the reference CLI. Source: <code>https://github.com/MaxonT/traces.md</code>.</p>
+<p>TRACES.md is a simple, open format for recording what AI agents did: objective, append-only, failures included. This package ships the reference CLI. Source: <code>https://github.com/MaxonT/TRACES.md</code>.</p>
 
 <h3>1. Capability gate</h3>
 <p>You must be able to (a) run shell commands and (b) read and write files in the user's home directory. If either is missing, stop and tell the user to paste this prompt into an agent that can, or to run the terminal one-liner above by hand.</p>
@@ -70,7 +76,7 @@ nav a{margin-right:16px;font-size:14px;text-decoration:none}
 
 <h3>3. Ask before you touch anything</h3>
 <p>Before running anything that changes the machine, show the user the exact command and wait for a yes. Start with a dry run:</p>
-<pre>curl -fsSL https://maxont.github.io/traces.md/install.sh -o /tmp/traces.md-install.sh
+<pre>curl -fsSL https://maxont.github.io/TRACES.md/install.sh -o /tmp/traces.md-install.sh
 bash /tmp/traces.md-install.sh --dry-run</pre>
 <p>Read the output to the user. After they agree:</p>
 <pre>bash /tmp/traces.md-install.sh
@@ -87,7 +93,7 @@ traces append -t "shell: traces --version" -a "check the install" -s ok -d "exit
 traces validate</pre>
 
 <h3>5. How to write traces from now on</h3>
-<p>For every task you perform, keep one trace file under <code>.trace/</code>. One line per operation: when, which tool, what it did, how it ended. Use <code>traces append</code> for each step, or <code>traces run -- &lt;command&gt;</code> to run a command and record its real exit code. The format is in <a href="https://github.com/MaxonT/traces.md/blob/main/SPEC.md">SPEC.md</a>.</p>
+<p>For every task you perform, keep one trace file under <code>.trace/</code>. One line per operation: when, which tool, what it did, how it ended. Use <code>traces append</code> for each step, or <code>traces run -- &lt;command&gt;</code> to run a command and record its real exit code. The format is in <a href="https://github.com/MaxonT/TRACES.md/blob/main/SPEC.md">SPEC.md</a>.</p>
 <ul>
 <li><strong>Failures are recorded.</strong> A trace with only successes is non-compliant. A failed step stays <code>fail</code> even if a later step repairs it.</li>
 <li><strong>Objective only.</strong> What tool, what it did, what came back. No reasoning, no opinion, no story.</li>
@@ -106,7 +112,7 @@ traces validate</pre>
 <p>Finish with a short summary: what was installed, whether <code>traces --version</code> worked, what you did <em>not</em> do, and the one next step for the user.</p>
 </div>
 
-<p class="muted" style="margin-top:36px">traces.md is MIT licensed. <a href="https://github.com/MaxonT/traces.md">Star it on GitHub</a> if it helps you.</p>
+<p class="muted" style="margin-top:36px">traces.md is MIT licensed. <a href="https://github.com/MaxonT/TRACES.md">Star it on GitHub</a> if it helps you.</p>
 </div>
 </body>
 </html>

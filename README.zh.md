@@ -5,13 +5,14 @@
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Python 3](https://img.shields.io/badge/python-3.9%2B-3776AB.svg?logo=python&logoColor=white)](https://www.python.org/)
 [![Dependencies: stdlib only](https://img.shields.io/badge/dependencies-stdlib%20only-brightgreen.svg)](#)
-[![CI](https://github.com/MaxonT/traces.md/actions/workflows/ci.yml/badge.svg)](https://github.com/MaxonT/traces.md/actions/workflows/ci.yml)
+[![CI](https://github.com/MaxonT/TRACES.md/actions/workflows/ci.yml/badge.svg)](https://github.com/MaxonT/TRACES.md/actions/workflows/ci.yml)
 [![Spec](https://img.shields.io/badge/spec-traces%2F0.1.0-2dd4bf.svg)](SPEC.md)
-[![GitHub stars](https://img.shields.io/github/stars/MaxonT/traces.md.svg?style=social)](https://github.com/MaxonT/traces.md/stargazers)
+[![GitHub stars](https://img.shields.io/github/stars/MaxonT/TRACES.md.svg?style=social)](https://github.com/MaxonT/TRACES.md/stargazers)
 
-[English](README.md) · [网站](https://maxont.github.io/traces.md/) · [规范 SPEC.md](SPEC.md)
+[English](README.md) · [网站](https://maxont.github.io/TRACES.md/) · [规范 SPEC.md](SPEC.md)
 
-[TRACES.md](https://maxont.github.io/traces.md/) 是一个简单、开放的格式，用来记录 AI agent 做了什么。
+[TRACES.md](https://maxont.github.io/TRACES.md/) 是一个简单、开放的格式，用来记录 AI agent 做了什么。
+就像 AGENTS.md，只不过记录的是 agent 做了什么。
 
 可以把 TRACES.md 看作 **agent 的飞行记录仪**：一个专用、可预期的地方，把每一次工具调用、命令和结果客观地写下来，失败也不例外，这样才能做错误分析，agent 才能自我优化。`AGENTS.md` 告诉 agent 该怎么做事；TRACES.md 记录它实际做了什么。
 
@@ -24,13 +25,13 @@
 **交给你的 AI**（任何能执行 shell 命令的 agent）：
 
 ```
-Read https://maxont.github.io/traces.md/install and install traces for me.
+Read https://maxont.github.io/TRACES.md/install and install traces for me.
 ```
 
 **终端快捷方式**（不会修改你的 shell 配置；加 `--dry-run` 可只预览）：
 
 ```sh
-curl -fsSL https://maxont.github.io/traces.md/install.sh | bash
+curl -fsSL https://maxont.github.io/TRACES.md/install.sh | bash
 ```
 
 Python 3.9+，只用标准库。也可以用容器：`docker run --rm ghcr.io/maxont/traces --help`。
@@ -54,9 +55,9 @@ spec: traces/0.1.0
 同一份 trace 也有 JSONL 形式（带 [JSON Schema](schema/trace.schema.json)），`traces fmt` 可以无损互转。
 `traces validate` 会拒绝藏起失败的 trace：`ok` 旁边却写着非零退出码，或者重试了却没记录过那次失败。
 
-<p align="center"><img src="docs/assets/how-it-works.zh.gif" alt="agent 如何留下 TRACES.md 记录：执行、记录、校验、分析" width="100%"></p>
+<p align="center"><img src="docs/assets/how-it-works.zh.gif" alt="agent 如何留下 TRACES.md 记录：执行、记录、校验、分析、改进" width="100%"></p>
 
-[交互播放器](https://maxont.github.io/traces.md/assets/how-it-works.zh.html)
+[交互播放器](https://maxont.github.io/TRACES.md/assets/how-it-works.zh.html)
 
 ## 快速使用
 
@@ -69,9 +70,17 @@ traces validate                                                # 无效或不诚
 traces stats                                                   # 按 agent、按工具统计失败率
 ```
 
+## 站在巨人的肩膀上
+
+| 项目 | 它如何塑造了 TRACES.md |
+|---|---|
+| [![AGENTS.md stars](https://img.shields.io/github/stars/agentsmd/agents.md?style=social&label=AGENTS.md)](https://github.com/agentsmd/agents.md) | 同样的形态和推广方式：一个任何 agent 都能遵守、不需要 SDK 的纯 Markdown 约定。[SPEC.md](SPEC.md) 第 1 节就从它讲起：AGENTS.md 告诉 agent 怎么做事，TRACES.md 告诉 agent 怎么留下记录。README、网站标题和描述都沿用 agents.md 的说法（"a simple, open format for ..."）。 |
+
+TRACES.md 是独立项目，与上面的项目没有隶属关系。
+
 ## 网站
 
-本仓库同时包含网站，托管在 [https://maxont.github.io/traces.md/](https://maxont.github.io/traces.md/)（GitHub Pages，源目录 `docs/`），用简单的方式讲清项目目标并给出示例。它是纯 HTML，无需构建：直接打开 `docs/index.html`。
+本仓库同时包含网站，托管在 [https://maxont.github.io/TRACES.md/](https://maxont.github.io/TRACES.md/)（GitHub Pages，源目录 `docs/`），用简单的方式讲清项目目标并给出示例。它是纯 HTML，无需构建：直接打开 `docs/index.html`。
 
 ## 关于
 

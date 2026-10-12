@@ -5,13 +5,14 @@
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Python 3](https://img.shields.io/badge/python-3.9%2B-3776AB.svg?logo=python&logoColor=white)](https://www.python.org/)
 [![Dependencies: stdlib only](https://img.shields.io/badge/dependencies-stdlib%20only-brightgreen.svg)](#)
-[![CI](https://github.com/MaxonT/traces.md/actions/workflows/ci.yml/badge.svg)](https://github.com/MaxonT/traces.md/actions/workflows/ci.yml)
+[![CI](https://github.com/MaxonT/TRACES.md/actions/workflows/ci.yml/badge.svg)](https://github.com/MaxonT/TRACES.md/actions/workflows/ci.yml)
 [![Spec](https://img.shields.io/badge/spec-traces%2F0.1.0-2dd4bf.svg)](SPEC.md)
-[![GitHub stars](https://img.shields.io/github/stars/MaxonT/traces.md.svg?style=social)](https://github.com/MaxonT/traces.md/stargazers)
+[![GitHub stars](https://img.shields.io/github/stars/MaxonT/TRACES.md.svg?style=social)](https://github.com/MaxonT/TRACES.md/stargazers)
 
-[中文](README.zh.md) · [Website](https://maxont.github.io/traces.md/) · [Spec](SPEC.md)
+[中文](README.zh.md) · [Website](https://maxont.github.io/TRACES.md/) · [Spec](SPEC.md)
 
-[TRACES.md](https://maxont.github.io/traces.md/) is a simple, open format for recording what AI agents did.
+[TRACES.md](https://maxont.github.io/TRACES.md/) is a simple, open format for recording what AI agents did.
+AGENTS.md, but for what agents did.
 
 Think of TRACES.md as a **flight recorder for agents**: a dedicated, predictable place where every tool call, command and result is written down, objectively, failures included, so errors can be analyzed and agents can improve. `AGENTS.md` tells an agent how to behave; TRACES.md records what it actually did.
 
@@ -24,13 +25,13 @@ If this is the file you wish every agent wrote, please **star the repo**. It is 
 **Give it to your AI** (any agent that can run shell commands):
 
 ```
-Read https://maxont.github.io/traces.md/install and install traces for me.
+Read https://maxont.github.io/TRACES.md/install and install traces for me.
 ```
 
 **Terminal shortcut** (never edits your shell config; add `--dry-run` to preview):
 
 ```sh
-curl -fsSL https://maxont.github.io/traces.md/install.sh | bash
+curl -fsSL https://maxont.github.io/TRACES.md/install.sh | bash
 ```
 
 Python 3.9+, standard library only. Or `docker run --rm ghcr.io/maxont/traces --help`.
@@ -55,9 +56,9 @@ The same trace exists as JSONL (with a [JSON Schema](schema/trace.schema.json)),
 between the two without loss. `traces validate` rejects a trace that hides a failure: an `ok` next to a
 non-zero exit code, or a retry whose failure was never recorded.
 
-<p align="center"><img src="docs/assets/how-it-works.gif" alt="How an agent leaves a TRACES.md record: act, record, validate, analyze" width="100%"></p>
+<p align="center"><img src="docs/assets/how-it-works.gif" alt="How an agent leaves a TRACES.md record: act, record, validate, analyze, improve" width="100%"></p>
 
-[Interactive player](https://maxont.github.io/traces.md/assets/how-it-works.html)
+[Interactive player](https://maxont.github.io/TRACES.md/assets/how-it-works.html)
 
 ## Quick use
 
@@ -70,9 +71,17 @@ traces validate                                                # exit 1 if inval
 traces stats                                                   # per agent, per tool, failure rate
 ```
 
+## Standing on the shoulders of
+
+| Project | How it shaped TRACES.md |
+|---|---|
+| [![AGENTS.md stars](https://img.shields.io/github/stars/agentsmd/agents.md?style=social&label=AGENTS.md)](https://github.com/agentsmd/agents.md) | Same shape and adoption model: one plain Markdown convention any agent can follow with no SDK. [SPEC.md](SPEC.md) section 1 opens with it: AGENTS.md tells an agent how to behave, TRACES.md tells it how to leave a record. The README, site title and description follow the agents.md wording ("a simple, open format for ..."). |
+
+TRACES.md is an independent project, not affiliated with the projects above.
+
 ## Website
 
-This repository also includes the website, hosted at [https://maxont.github.io/traces.md/](https://maxont.github.io/traces.md/) (GitHub Pages from `docs/`), that explains the project's goals in a simple way and features some examples. It is plain HTML, so there is nothing to build: open `docs/index.html`.
+This repository also includes the website, hosted at [https://maxont.github.io/TRACES.md/](https://maxont.github.io/TRACES.md/) (GitHub Pages from `docs/`), that explains the project's goals in a simple way and features some examples. It is plain HTML, so there is nothing to build: open `docs/index.html`.
 
 ## About
 
