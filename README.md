@@ -6,7 +6,7 @@
 [![Python 3](https://img.shields.io/badge/python-3.9%2B-3776AB.svg?logo=python&logoColor=white)](https://www.python.org/)
 [![Dependencies: stdlib only](https://img.shields.io/badge/dependencies-stdlib%20only-brightgreen.svg)](#)
 [![CI](https://github.com/MaxonT/TRACES.md/actions/workflows/ci.yml/badge.svg)](https://github.com/MaxonT/TRACES.md/actions/workflows/ci.yml)
-[![Spec](https://img.shields.io/badge/spec-traces%2F0.1.0-2dd4bf.svg)](SPEC.md)
+[![Spec](https://img.shields.io/badge/spec-traces%2F0.1.1-2dd4bf.svg)](SPEC.md)
 [![GitHub stars](https://img.shields.io/github/stars/MaxonT/TRACES.md.svg?style=social)](https://github.com/MaxonT/TRACES.md/stargazers)
 
 [中文](README.zh.md) · [Website](https://maxont.github.io/TRACES.md/) · [Spec](SPEC.md)

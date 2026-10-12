@@ -65,3 +65,21 @@ x-timestamps: backfilled steps use git, GitHub API (PR and Actions run times), f
 2026-10-12T18:32:50-05:00 | shell: /tmp/tmd-venv/bin/python -m unittest discover -s tests | run the suite | ok: 135 tests
 2026-10-12T18:32:52-05:00 | shell: python3 -c seo_audit(lineage topics, lineage description, local README) | run the lab SEO audit on the planned metadata | ok: 4 checks pass, no warnings
 2026-10-12T18:33:43-05:00 | shell: aisync log --agent trae --project traces-md | log PR 6, late: the log was missed right after the 18:26 merge | ok: logged
+2026-10-12T18:34:30-05:00 | shell: gh pr checks feat/refine-lineage-social-card | read the CI results | ok: test 3.9, 3.11 and 3.13 pass
+2026-10-12T18:35:40-05:00 | shell: gh api repos/MaxonT/TRACES.md/issues/{6,7}/comments, pulls/{6,7}/comments, reviews | read the Codex review results before merging | ok: both reviews completed, no findings
+2026-10-12T18:36:00-05:00 | shell: gh pr merge 7 --squash (main checkout) | merge PR 7 | ok: 149f71b
+2026-10-12T18:36:05-05:00 | shell: gh repo edit --description (lineage description.txt) | set the repo description from the lineage render | ok: 145 characters
+2026-10-12T18:36:10-05:00 | shell: gh api -X PUT repos/MaxonT/TRACES.md/topics -f names[]=... | set the topics from the lineage render | fail: exit 1, HTTP 422: names wasn't supplied
+2026-10-12T18:36:20-05:00 | shell: python3 -m refine.polish seo --gh MaxonT/TRACES.md | run the SEO audit against GitHub | partial: 3 pass; primary topic agents-md not in H1
+2026-10-12T18:40:10-05:00 | shell: gh api -X PUT repos/MaxonT/TRACES.md/topics --input topics.json | set the topics from a JSON body | partial: 16 topics set, but GitHub kept agents-md first
+2026-10-12T18:40:20-05:00 | shell: python3 -m refine.polish seo --gh MaxonT/TRACES.md | rerun the SEO audit | partial: 3 pass; primary topic agents-md not in H1
+2026-10-12T18:40:49-05:00 | shell: curl https://maxont.github.io/TRACES.md/{,install/,install.sh,social-card.png,assets/how-it-works.gif,assets/how-it-works.html} | check the live site after PR 7 | ok: 6 paths HTTP 200
+2026-10-12T18:41:00-05:00 | shell: gh api -X PUT topics [traces]; gh api -X PUT topics --input topics.json | reset the topics to traces alone, then set all 16 | ok: traces is now the first topic
+2026-10-12T18:41:10-05:00 | shell: python3 -m refine.polish seo --gh MaxonT/TRACES.md | rerun the SEO audit | ok: 4 checks pass, no warnings
+2026-10-12T18:41:20-05:00 | shell: aisync log --agent trae --project traces-md | log PR 7 and the metadata change | ok: logged 0e5e1444bbfed581
+2026-10-12T18:41:30-05:00 | shell: git worktree remove ../traces-md.wt-refine; git worktree add ../traces-md.wt-publish -b chore/publish-v0-1-1 origin/main; aisync claim | move to a publish worktree for v0.1.1 | ok: base 149f71b, claimed until 20:41
+2026-10-12T18:41:50-05:00 | edit: pyproject.toml, traces/__init__.py, traces/model.py, schema (2 copies), SPEC.md, north_star.md, README.md, README.zh.md, docs/index.html, tests/test_install.py | bump the package to 0.1.1 and the spec to traces/0.1.1 (wording only) with a change log | ok: 12 files
+2026-10-12T18:42:00-05:00 | edit: tests/test_repo.py | test that the change log lists the current version and older 0.1.x traces stay valid | ok: 1 test
+2026-10-12T18:42:42-05:00 | shell: /tmp/tmd-venv/bin/python -W error::ResourceWarning -m unittest discover -s tests | run the suite with setuptools available | ok: exit 0
+2026-10-12T18:42:45-05:00 | shell: python3.11 -m unittest discover -s tests | run the suite on Python 3.11 | ok: exit 0
+2026-10-12T18:43:04-05:00 | traces append --ts 2026-10-12T18:33:30-05:00 | record the PR 7 commit step (git commit 5b28765, push, gh pr create, about 18:33:45), refused earlier as out of order (E032) and written here late | fail: exit 1, E032: 18:33:30 earlier than the previous step 18:33:43

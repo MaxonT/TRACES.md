@@ -1,10 +1,10 @@
 # TRACES.md specification
 
-> What: the standard for how an AI agent records what it did. Version `0.1.0`.
+> What: the standard for how an AI agent records what it did. Version `0.1.1`.
 > Why: so that every tool leaves the same objective, replayable record, the raw material for error analysis and self-optimization.
 > How: write a trace file per task under `.trace/` in this format. `traces validate` checks it.
 
-Status: **0.1.0, draft**. Spec identifier: `traces/0.1.0`. The key words MUST, SHOULD and MAY are
+Status: **0.1.1, draft**. Spec identifier: `traces/0.1.1`. The key words MUST, SHOULD and MAY are
 used as in RFC 2119.
 
 ## 1. The idea in one paragraph
@@ -21,7 +21,7 @@ It is complete and honest: **failures are recorded** (see rule R1).
 task: Fix the failing date parser test
 agent: claude-code
 started: 2026-10-12T09:14:02-05:00
-spec: traces/0.1.0
+spec: traces/0.1.1
 repo: acme/billing
 branch: fix/date-parser
 base_sha: 4f2a9c1
@@ -66,7 +66,7 @@ line. Each key appears at most once.
 | `task` | yes | one-line objective of the task |
 | `agent` | yes | tool id, same as in the file name |
 | `started` | yes | ISO-8601 timestamp with timezone, to the second |
-| `spec` | SHOULD | the spec version this trace follows, `traces/0.1.0` |
+| `spec` | SHOULD | the spec version this trace follows, `traces/0.1.1` |
 | `repo` | no | repository identifier, such as `owner/name` or a remote URL |
 | `branch` | no | branch the work ran on |
 | `base_sha` | no | commit the work started from, for replay |
@@ -126,7 +126,7 @@ The same trace, one JSON object per line. The first line is the header object, e
 line is a step object.
 
 ```
-{"type":"trace","task":"Fix the failing date parser test","agent":"claude-code","started":"2026-10-12T09:14:02-05:00","spec":"traces/0.1.0","repo":"acme/billing","branch":"fix/date-parser","base_sha":"4f2a9c1"}
+{"type":"trace","task":"Fix the failing date parser test","agent":"claude-code","started":"2026-10-12T09:14:02-05:00","spec":"traces/0.1.1","repo":"acme/billing","branch":"fix/date-parser","base_sha":"4f2a9c1"}
 {"type":"step","ts":"2026-10-12T09:14:05-05:00","tool":"shell: git status","action":"list working tree changes","result":{"status":"ok","detail":"clean"}}
 {"type":"step","ts":"2026-10-12T09:14:31-05:00","tool":"shell: python -m pytest tests/test_dates.py","action":"run the date tests","result":{"status":"fail","detail":"exit 1, 1 failed, 11 passed"}}
 ```
@@ -214,7 +214,7 @@ Warnings do not, unless the validator is run in strict mode.
 ## 9. Extensions
 
 Extra header keys start with `x-` (`x-model: claude-opus`). Readers ignore unknown `x-` keys.
-Step lines have no extensions in 0.1.0: four fields, always. Anything more belongs in `detail`.
+Step lines have no extensions in 0.1.x: four fields, always. Anything more belongs in `detail`.
 
 ## 10. Versioning
 
@@ -224,7 +224,7 @@ Before `1.0.0` a minor release MAY break, and the change log in the release note
 
 ## 11. Compatibility
 
-0.1.0 is a strict form of the cross-tool trace rule used by the ai-sync hub: the same `.trace/`
+0.1.x is a strict form of the cross-tool trace rule used by the ai-sync hub: the same `.trace/`
 folder, the same `<date>-<agent>-<slug>` name, the same `<ts> | <tool> | <what> | <result>` line.
 It adds the header, the escaping, and the leading status word in `result` (the shipped rule
 leaves `result` as free text).
@@ -233,3 +233,10 @@ leaves `result` as free text).
 
 See [`examples/`](examples/): `2026-10-12-claude-code-fix-date-parser.md` and the same trace as
 `.jsonl`, plus traces with failures and a folder of deliberately invalid traces used by the tests.
+
+## 13. Changes
+
+| Version | Date | Change |
+|---|---|---|
+| 0.1.1 | 2026-10-12 | Wording only, no normative change: links follow the repository rename to `MaxonT/TRACES.md`; section 4.3 names `wait` steps for idle time, so a gap closed by one is not reported as W003 (warnings never affect validity). Traces that say `traces/0.1.0` stay valid. |
+| 0.1.0 | 2026-10-12 | First draft. |

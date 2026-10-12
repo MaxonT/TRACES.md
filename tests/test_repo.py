@@ -23,6 +23,13 @@ class VersionTests(unittest.TestCase):
         self.assertIn("traces/" + model.SPEC_VERSION, (ROOT / "SPEC.md").read_text())
         self.assertIn("`%s`" % model.SPEC_VERSION, (ROOT / "north_star.md").read_text())
 
+    def test_spec_change_log_lists_the_current_version_and_older_traces_stay_valid(self):
+        spec = (ROOT / "SPEC.md").read_text()
+        self.assertIn("| %s |" % model.SPEC_VERSION, spec.split("## 13. Changes", 1)[1])
+        older = validate.check_paths([ROOT / "examples"])
+        self.assertTrue(older and all(r.ok(strict=True) for r in older),
+                        "traces that name an older 0.1.x spec must stay valid")
+
     def test_console_script(self):
         self.assertIn('traces = "traces.cli:main"', (ROOT / "pyproject.toml").read_text())
         self.assertIn("dependencies = []", (ROOT / "pyproject.toml").read_text())
