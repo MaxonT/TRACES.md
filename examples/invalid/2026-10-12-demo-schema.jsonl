@@ -1,0 +1,6 @@
+{"type":"trace","task":"Deliberately invalid: schema violations","agent":"demo","started":"2026-10-12T10:40:00-05:00","spec":"traces/0.1.0"}
+{"type":"step","ts":"2026-10-12T10:40:05-05:00","tool":"shell: ls","action":"list files","result":{"status":"ok","detail":"3 files"}}
+{"type":"step","ts":"2026-10-12T10:40:30-05:00","tool":"shell: make","action":"build","result":{"status":"succeeded"}}
+{"type":"step","ts":"2026-10-12","tool":"shell: make test","action":"run tests","result":{"status":"ok"}}
+this line is not json
+{"type":"step","ts":"2026-10-12T10:41:30-05:00","tool":"shell: make test","action":"run tests","result":{"status":"ok"},"why":"because"}

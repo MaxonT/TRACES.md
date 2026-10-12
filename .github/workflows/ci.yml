@@ -1,0 +1,38 @@
+# What: CI for traces-md: the offline test suite on three Python versions, plus the repo's own traces.
+# Why: every push and PR proves the suite is green, the examples validate, and the dogfooded .trace/ is honest.
+# How: runs automatically on push to main and on pull requests; no secrets needed.
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.9", "3.11", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Build tools (only used by the wheel install test)
+        run: python -m pip install --quiet "setuptools>=77" wheel
+
+      - name: Unit tests (includes wheel install-and-run)
+        run: python -W error::ResourceWarning -m unittest discover -s tests -v
+
+      - name: Examples and our own traces validate (strict)
+        run: python -m traces validate --strict examples .trace
+
+      - name: Examples are in canonical form
+        run: python -m traces fmt --check examples
