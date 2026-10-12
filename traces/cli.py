@@ -23,7 +23,7 @@ EXIT_OK, EXIT_INVALID, EXIT_USAGE, EXIT_IO = 0, 1, 2, 3
 EPILOG = """exit codes: 0 ok, 1 invalid trace or threshold exceeded, 2 usage error, 3 I/O or lock failure
 environment: TRACES_AGENT (default --agent), TRACES_DIR (trace directory), TRACES_FILE (default file),
 TRACES_LOG (append one JSON line per run), TRACES_SELF_TRACE (append this run as a step to a trace)
-spec: https://github.com/MaxonT/traces.md/blob/main/SPEC.md"""
+spec: https://github.com/MaxonT/TRACES.md/blob/main/SPEC.md"""
 
 
 class UsageError(Exception):

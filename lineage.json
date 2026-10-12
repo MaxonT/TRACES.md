@@ -1,0 +1,19 @@
+{
+  "repo": "MaxonT/TRACES.md",
+  "name": "TRACES.md",
+  "purpose": "a simple, open format for recording what AI agents did, for error analysis and self-optimization",
+  "domain": "what agents did",
+  "tagline": "one line per step · failures included",
+  "topics": ["traces", "agents-md", "ai-agents", "agent-traces", "coding-agents", "error-analysis", "observability", "open-standard", "specification", "markdown", "llm", "cli", "python"],
+  "extra_topics": ["claude-code", "codex", "cursor"],
+  "credits": [
+    {
+      "name": "AGENTS.md",
+      "repo": "agentsmd/agents.md",
+      "relation": "analogy",
+      "upstream_does": "how agents should behave",
+      "headline": true,
+      "evidence": "Same shape and adoption model: one plain Markdown convention any agent can follow with no SDK. SPEC.md section 1 opens with it: AGENTS.md tells an agent how to behave, TRACES.md tells it how to leave a record. The README, site title and description follow the agents.md wording ('a simple, open format for ...')."
+    }
+  ]
+}
