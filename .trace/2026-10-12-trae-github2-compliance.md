@@ -83,3 +83,25 @@ x-timestamps: backfilled steps use git, GitHub API (PR and Actions run times), f
 2026-10-12T18:42:42-05:00 | shell: /tmp/tmd-venv/bin/python -W error::ResourceWarning -m unittest discover -s tests | run the suite with setuptools available | ok: exit 0
 2026-10-12T18:42:45-05:00 | shell: python3.11 -m unittest discover -s tests | run the suite on Python 3.11 | ok: exit 0
 2026-10-12T18:43:04-05:00 | traces append --ts 2026-10-12T18:33:30-05:00 | record the PR 7 commit step (git commit 5b28765, push, gh pr create, about 18:33:45), refused earlier as out of order (E032) and written here late | fail: exit 1, E032: 18:33:30 earlier than the previous step 18:33:43
+2026-10-12T18:43:10-05:00 | shell: git commit; git push -u origin chore/publish-v0-1-1; gh pr create | commit the release bump and open PR 8 | ok: https://github.com/MaxonT/TRACES.md/pull/8
+2026-10-12T18:44:00-05:00 | shell: gh pr checks chore/publish-v0-1-1 | read the CI results | ok: test 3.9, 3.11 and 3.13 pass
+2026-10-12T18:44:45-05:00 | shell: gh api repos/MaxonT/TRACES.md/issues/8/comments, pulls/8/comments | read the Codex review result | ok: completed, no findings
+2026-10-12T18:45:00-05:00 | shell: gh pr merge 8 --squash; git tag -a v0.1.1 9c68538; git push origin v0.1.1 | merge PR 8 and tag the release | ok: 9c68538, tag v0.1.1
+2026-10-12T18:46:16-05:00 | ci: release workflow v0.1.1 | wait for the tag-triggered release workflow | ok: success in 40s
+2026-10-12T18:46:40-05:00 | shell: gh release view v0.1.1 | check the GitHub Release assets | ok: traces_md-0.1.1-py3-none-any.whl, traces_md-0.1.1.tar.gz
+2026-10-12T18:46:45-05:00 | shell: curl https://ghcr.io/v2/maxont/traces/manifests/{0.1.1,latest} (anonymous token) | check the container image | ok: both HTTP 200, same digest sha256:313e578e
+2026-10-12T18:46:55-05:00 | shell: pip install <v0.1.1 wheel URL> in a fresh venv; traces init; traces append; traces validate --strict | install the released wheel and run it | ok: traces 0.1.1 (spec traces/0.1.1); valid; trace written to ./.trace, nothing in ~/.ai-sync/traces
+2026-10-12T18:47:10-05:00 | shell: aisync log --agent trae --project traces-md | log the v0.1.1 release | ok: logged fbaaba72f6ed382f
+2026-10-12T18:47:15-05:00 | shell: git worktree remove ../traces-md.wt-publish; git branch -D chore/publish-v0-1-1 | remove the publish worktree | ok: removed
+2026-10-12T18:47:20-05:00 | shell: grep -rIl traces-md, maxont.github.io/traces.md, MaxonT/traces.md in ~/projects and ~/.ai-sync | find links to the retired names | partial: no links to the dead Pages URLs; repo-name mentions in the-greatness-lab (lineage example, test fixture, AGENTS.md command) and ~/.ai-sync (PRD, kirocrew traces, journal, state); left for their owners
+2026-10-12T18:47:25-05:00 | shell: git worktree list | check for leftover worktrees | fail: traces-md.wt-wait from PR 6 was never removed
+2026-10-12T18:47:30-05:00 | shell: git worktree remove ../traces-md.wt-wait; git branch -D feat/build-wait-step | remove the leftover build worktree | ok: only the main worktree left
+2026-10-12T18:47:50-05:00 | shell: python3 -m promote.check_pitch (example); gh api readme; gh repo view; unittest; curl site; gh release view; traces stats > promote_out/TRACES.md/p1/facts.txt | collect P1 facts in the lab | ok: 109 lines: 136 tests at 9c68538, site and install HTTP 200, v0.1.1 assets, 0 stars
+2026-10-12T18:48:00-05:00 | shell: python3 -m traces stats .trace | count this repo's own trace steps for a proof | ok: 2 traces, 173 steps, 18 fail, 20 partial
+2026-10-12T18:48:10-05:00 | write: the-greatness-lab/promote_out/TRACES.md/p1/pitch.json | write the P1 pitch from facts.txt only | ok: one-liners, audience, hook, 3 proofs, 7 angles; not yet owner-approved
+2026-10-12T18:48:15-05:00 | shell: python3 -m promote.check_pitch promote_out/TRACES.md/p1/pitch.json | check the pitch | ok: exit 0
+2026-10-12T18:48:28-05:00 | shell: python3 -m promote.snapshot take MaxonT/TRACES.md --out promote_out/TRACES.md/p6/ | take the pre-launch baseline snapshot | ok: 2026-10-12T2348Z.json: 0 stars, 0 forks, 0 views, 0 clones
+2026-10-12T18:48:40-05:00 | shell: cp /tmp/tmd-lineage/* the-greatness-lab/lineage_out/TRACES.md/ | keep the lineage outreach drafts where the lab expects them (git-ignored) | ok: 8 files
+2026-10-12T18:48:46-05:00 | shell: git worktree add ../traces-md.wt-trace -b docs/promote-goal-trace origin/main; aisync claim | create a worktree to commit the rest of this trace | ok: base 9c68538
+2026-10-12T18:49:00-05:00 | wait: owner approval | stop the promote flow at the P1 gate: P2 to P4 need an owner-approved pitch (approved_by) | partial: P1 done and checked; P2a, P2c, P2d, P2e, P3, P4 not started; nothing posted
+2026-10-12T18:49:27-05:00 | traces append | correct the previous step: a wait step is stamped when the wait ends (SPEC 4.3); the 18:49:00 step marks the start of the wait for owner approval, which has not ended | partial: start of wait recorded as a wait step; the closing wait step comes after approval
