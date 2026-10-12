@@ -15,7 +15,7 @@ from typing import Dict, List, Optional, Tuple
 
 from . import jsonschema_lite
 
-SPEC_VERSION = "0.1.0"
+SPEC_VERSION = "0.1.1"
 SPEC_ID = "traces/" + SPEC_VERSION
 
 HEADER_ORDER = ("task", "agent", "started", "spec", "repo", "branch", "base_sha", "continues")

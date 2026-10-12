@@ -15,7 +15,7 @@ record of what it actually did. You cannot improve what you cannot replay.
 ## Objective goals (each one can be verified)
 
 - A versioned written spec, [`SPEC.md`](SPEC.md), defining the `.trace/` layout, the file name,
-  the file header and the per-step line. Version starts at `0.1.0`.
+  the file header and the per-step line. Version started at `0.1.0`; current `0.1.1` (wording only).
 - A reference CLI, `traces`: `validate`, `init`, `new`, `append`, `run`, `show`, `cat`, `stats`,
   `status`, `fmt`, `schema`, `version`.
 - Two serializations that round-trip losslessly: Markdown for humans, JSONL for machines.
