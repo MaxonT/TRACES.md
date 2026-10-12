@@ -100,6 +100,19 @@ Statuses:
 A shell pipe `a | b` is therefore written `a \| b`. A backslash followed by any other character
 is kept as typed. Writers SHOULD use a tool (`traces append`) instead of escaping by hand.
 
+### 4.3 Recording idle time
+
+Time in which the agent did nothing (waiting for a person, a review, a scheduled job) is recorded
+as a step whose `tool` is `wait` (or `wait: <what>`), stamped when the wait ends:
+
+```
+2026-10-12T18:21:00-05:00 | wait: owner reply | wait for the owner's next instruction | ok: idle since 17:31:50
+```
+
+A long gap that ends in a `wait` step is accounted for, so a validator does not warn about it
+(W003). A gap with no `wait` step may hide unrecorded work. A `wait` step is objective: it says
+what was waited for, never why.
+
 ## 5. Why this shape
 
 Greppable (`grep '| fail'`), diffable, append-only, zero dependencies, readable by a person and
@@ -192,7 +205,7 @@ Warnings do not, unless the validator is run in strict mode.
 | `E050` | error | JSONL line is not valid JSON or violates the schema |
 | `W001` | warning | narrative language in `tool` or `action` (R2) |
 | `W002` | warning | failure-sounding text in an `ok` result |
-| `W003` | warning | more than 30 minutes between two steps: possible unrecorded work |
+| `W003` | warning | more than 30 minutes between two steps, and the later step is not a `wait` step (4.3): possible unrecorded work |
 | `W004` | warning | `spec` header missing |
 | `W005` | warning | trace has no steps |
 | `W006` | warning | trace follows a newer spec minor version |
