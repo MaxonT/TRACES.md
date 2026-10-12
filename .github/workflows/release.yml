@@ -1,4 +1,4 @@
-# What: tag-triggered release for traces-md: GitHub Release (wheel + sdist) and a ghcr.io image.
+# What: tag-triggered release for traces.md: GitHub Release (wheel + sdist) and a ghcr.io image.
 # Why: a github2 repo never has an empty Releases or Packages sidebar.
 # How: bump the version in pyproject.toml, push tag vX.Y.Z; or run by hand
 #      (workflow_dispatch) to re-publish an existing tag.
@@ -54,7 +54,7 @@ jobs:
           if gh release view "$TAG" >/dev/null 2>&1; then
             gh release upload "$TAG" dist/* --clobber
           else
-            gh release create "$TAG" dist/* --title "traces-md ${TAG#v}" --generate-notes
+            gh release create "$TAG" dist/* --title "traces.md ${TAG#v}" --generate-notes
           fi
 
       - uses: docker/login-action@v3
