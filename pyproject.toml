@@ -21,9 +21,9 @@ classifiers = [
 dependencies = []
 
 [project.urls]
-Homepage = "https://maxont.github.io/traces.md"
-Source = "https://github.com/MaxonT/traces.md"
-Spec = "https://github.com/MaxonT/traces.md/blob/main/SPEC.md"
+Homepage = "https://maxont.github.io/TRACES.md"
+Source = "https://github.com/MaxonT/TRACES.md"
+Spec = "https://github.com/MaxonT/TRACES.md/blob/main/SPEC.md"
 
 [project.scripts]
 traces = "traces.cli:main"

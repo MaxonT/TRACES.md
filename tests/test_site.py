@@ -2,13 +2,15 @@
 Why: the release promises (circle-free banner, EN/ZH images kept apart, a site with /install, an image on ghcr) must not rot.
 How: python3 -m unittest discover -s tests
 """
+import json
 import re
+import struct
 import unittest
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 DOCS = ROOT / "docs"
-SITE = "https://maxont.github.io/traces.md"
+SITE = "https://maxont.github.io/TRACES.md"
 
 
 class BannerTests(unittest.TestCase):
@@ -48,14 +50,14 @@ class ReadmeTests(unittest.TestCase):
     def test_readme_order_banner_note_star_install_format(self):
         order = [self.en.index(s) for s in
                  ("docs/banner.svg", "**Note.**", "star the repo", "## Install",
-                  "Read https://maxont.github.io/traces.md/install and install traces for me.",
-                  "curl -fsSL https://maxont.github.io/traces.md/install.sh | bash",
+                  "Read https://maxont.github.io/TRACES.md/install and install traces for me.",
+                  "curl -fsSL https://maxont.github.io/TRACES.md/install.sh | bash",
                   "## The format at a glance")]
         self.assertEqual(order, sorted(order))
 
     def test_zh_readme_has_the_same_install_lines(self):
-        self.assertIn("Read https://maxont.github.io/traces.md/install and install traces for me.", self.zh)
-        self.assertIn("curl -fsSL https://maxont.github.io/traces.md/install.sh | bash", self.zh)
+        self.assertIn("Read https://maxont.github.io/TRACES.md/install and install traces for me.", self.zh)
+        self.assertIn("curl -fsSL https://maxont.github.io/TRACES.md/install.sh | bash", self.zh)
         self.assertIn("README.md", self.zh)
         self.assertIn("README.zh.md", self.en)
 
@@ -97,10 +99,66 @@ class SiteTests(unittest.TestCase):
         sh = DOCS / "install.sh"
         text = sh.read_text(encoding="utf-8")
         self.assertNotIn("@@", text)
-        self.assertIn("https://github.com/MaxonT/traces.md", text)
+        self.assertIn("https://github.com/MaxonT/TRACES.md", text)
         self.assertIn("command -v traces", text)
         self.assertTrue(sh.stat().st_mode & 0o111, "install.sh must be executable")
         self.assertIn("(3, 9)", text)
+
+
+class RefineTests(unittest.TestCase):
+    def test_social_card_is_a_1200x630_png_referenced_by_og_and_twitter(self):
+        data = (DOCS / "social-card.png").read_bytes()
+        self.assertEqual(data[:8], b"\x89PNG\r\n\x1a\n")
+        width, height = struct.unpack(">II", data[16:24])
+        self.assertEqual((width, height), (1200, 630))
+        for page in ("index.html", "install/index.html"):
+            html = (DOCS / page).read_text(encoding="utf-8")
+            for prop in ('property="og:image"', 'name="twitter:image"'):
+                tag = re.search(r'<meta %s content="([^"]+)">' % prop, html)
+                self.assertIsNotNone(tag, "%s in %s" % (prop, page))
+                self.assertEqual(tag.group(1), SITE + "/social-card.png")
+            self.assertNotIn('og:image" content="%s/banner.svg' % SITE, html)
+
+    def test_lineage_manifest_credits_agents_md_with_evidence(self):
+        lin = json.loads((ROOT / "lineage.json").read_text(encoding="utf-8"))
+        self.assertEqual(lin["repo"], "MaxonT/TRACES.md")
+        heads = [c for c in lin["credits"] if c.get("headline")]
+        self.assertEqual(len(heads), 1)
+        self.assertEqual(heads[0]["repo"], "agentsmd/agents.md")
+        self.assertGreaterEqual(len(heads[0]["evidence"]), 30)
+        self.assertIn("agents-md", lin["topics"])
+        self.assertEqual(lin["topics"][0], "traces", "primary topic must appear in the README H1")
+
+    def test_readmes_credit_agents_md_without_claiming_affiliation(self):
+        for name, heading in (("README.md", "## Standing on the shoulders of"),
+                              ("README.zh.md", "## 站在巨人的肩膀上")):
+            text = (ROOT / name).read_text(encoding="utf-8")
+            self.assertIn(heading, text)
+            self.assertIn("https://github.com/agentsmd/agents.md", text)
+            self.assertNotRegex(text.lower(), r"\b(endorsed|official|affiliated with agents|sponsored)\b")
+        h1 = re.search(r"^#\s+(.+)$", (ROOT / "README.md").read_text(encoding="utf-8"), re.M).group(1)
+        self.assertIn("traces", h1.lower())
+
+    def test_how_it_works_players_are_paced_and_in_the_slug_mode(self):
+        for name in ("how-it-works.html", "how-it-works.zh.html"):
+            html = (DOCS / "assets" / name).read_text(encoding="utf-8")
+            # radial mode (seed 'traces') draws a rotated-square core labelled "pipeline"
+            self.assertIn(">pipeline</text>", html, name + ": expected the radial mode")
+            self.assertIn("transform=\"rotate(45", html, name)
+            self.assertNotIn("<circle", html, name + " must stay circle-free")
+            self.assertEqual(html.count('class="fr"'), 50, name)
+        zh = (DOCS / "assets" / "how-it-works.zh.html").read_text(encoding="utf-8")
+        self.assertRegex(zh, r"[\u4e00-\u9fff]")
+        self.assertNotRegex((DOCS / "assets" / "how-it-works.html").read_text(encoding="utf-8"),
+                            r"[\u4e00-\u9fff]")
+
+    def test_no_link_points_at_a_retired_repo_name(self):
+        for path in [ROOT / "README.md", ROOT / "README.zh.md", ROOT / "SPEC.md", ROOT / "pyproject.toml",
+                     ROOT / "Dockerfile", DOCS / "index.html", DOCS / "install/index.html", DOCS / "install.sh"]:
+            text = path.read_text(encoding="utf-8")
+            for retired in ("maxont.github.io/traces-md", "maxont.github.io/traces.md",
+                            "MaxonT/traces-md", "MaxonT/traces.md"):
+                self.assertNotIn(retired, text, "%s links to %s" % (path.name, retired))
 
 
 class PublishFilesTests(unittest.TestCase):
