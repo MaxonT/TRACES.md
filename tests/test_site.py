@@ -8,7 +8,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 DOCS = ROOT / "docs"
-SITE = "https://maxont.github.io/traces-md"
+SITE = "https://maxont.github.io/traces.md"
 
 
 class BannerTests(unittest.TestCase):
@@ -48,14 +48,14 @@ class ReadmeTests(unittest.TestCase):
     def test_readme_order_banner_note_star_install_format(self):
         order = [self.en.index(s) for s in
                  ("docs/banner.svg", "**Note.**", "star the repo", "## Install",
-                  "Read https://maxont.github.io/traces-md/install and install traces for me.",
-                  "curl -fsSL https://maxont.github.io/traces-md/install.sh | bash",
+                  "Read https://maxont.github.io/traces.md/install and install traces for me.",
+                  "curl -fsSL https://maxont.github.io/traces.md/install.sh | bash",
                   "## The format at a glance")]
         self.assertEqual(order, sorted(order))
 
     def test_zh_readme_has_the_same_install_lines(self):
-        self.assertIn("Read https://maxont.github.io/traces-md/install and install traces for me.", self.zh)
-        self.assertIn("curl -fsSL https://maxont.github.io/traces-md/install.sh | bash", self.zh)
+        self.assertIn("Read https://maxont.github.io/traces.md/install and install traces for me.", self.zh)
+        self.assertIn("curl -fsSL https://maxont.github.io/traces.md/install.sh | bash", self.zh)
         self.assertIn("README.md", self.zh)
         self.assertIn("README.zh.md", self.en)
 
@@ -79,7 +79,7 @@ class SiteTests(unittest.TestCase):
 
     def test_home_page_explains_why_shows_the_format_and_links_install(self):
         html = (DOCS / "index.html").read_text(encoding="utf-8")
-        for needle in ("Why every AI should write traces", "ts | tool | action | result",
+        for needle in ("Why TRACES.md?", "ts | tool | action | result",
                        'href="install/"', "failures are recorded", "traces validate",
                        "ghcr.io/maxont/traces", "<title>"):
             self.assertIn(needle, html)
@@ -88,7 +88,7 @@ class SiteTests(unittest.TestCase):
         html = (DOCS / "install/index.html").read_text(encoding="utf-8")
         self.assertIn("For humans", html)
         self.assertIn("FOR YOUR AI", html)
-        self.assertIn("Read %s/install and install traces-md for me." % SITE, html)
+        self.assertIn("Read %s/install and install traces for me." % SITE, html)
         self.assertIn("curl -fsSL %s/install.sh | bash" % SITE, html)
         self.assertIn("--dry-run", html)
         self.assertNotIn("@@", html)
@@ -97,7 +97,7 @@ class SiteTests(unittest.TestCase):
         sh = DOCS / "install.sh"
         text = sh.read_text(encoding="utf-8")
         self.assertNotIn("@@", text)
-        self.assertIn("https://github.com/MaxonT/traces-md", text)
+        self.assertIn("https://github.com/MaxonT/traces.md", text)
         self.assertIn("command -v traces", text)
         self.assertTrue(sh.stat().st_mode & 0o111, "install.sh must be executable")
         self.assertIn("(3, 9)", text)

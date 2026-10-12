@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
-# What: installer for traces-md. Installs the `traces` command from GitHub.
+# What: installer for traces.md. Installs the `traces` command from GitHub.
 # Why: the terminal shortcut on the install page; one line, safe to read first.
 # How:
-#   curl -fsSL https://maxont.github.io/traces-md/install.sh | bash
+#   curl -fsSL https://maxont.github.io/traces.md/install.sh | bash
 #   bash install.sh --dry-run        # show what would happen, change nothing
 #
 # It installs the Python package with uv, pipx or pip --user.
@@ -10,7 +10,7 @@
 # Generated from the-greatness-lab publish/templates/install.sh.
 set -euo pipefail
 
-REPO="https://github.com/MaxonT/traces-md"
+REPO="https://github.com/MaxonT/traces.md"
 REF="main"
 DRY=0
 
@@ -32,7 +32,7 @@ run() {
 }
 
 if ! command -v python3 >/dev/null 2>&1; then
-  say "error: python3 not found. traces-md needs Python 3.9 or newer." >&2
+  say "error: python3 not found. traces.md needs Python 3.9 or newer." >&2
   exit 1
 fi
 if ! python3 -c 'import sys; sys.exit(0 if sys.version_info >= (3, 9) else 1)'; then

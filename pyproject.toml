@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "traces-md"
 version = "0.1.0"
-description = "TRACES.md: an open standard for how AI agents record what they did, for error analysis and self-optimization. Reference CLI `traces`."
+description = "TRACES.md: a simple, open format for recording what AI agents did. Reference CLI `traces`."
 readme = "README.md"
 requires-python = ">=3.9"
 license = "MIT"
@@ -21,9 +21,9 @@ classifiers = [
 dependencies = []
 
 [project.urls]
-Homepage = "https://maxont.github.io/traces-md"
-Source = "https://github.com/MaxonT/traces-md"
-Spec = "https://github.com/MaxonT/traces-md/blob/main/SPEC.md"
+Homepage = "https://maxont.github.io/traces.md"
+Source = "https://github.com/MaxonT/traces.md"
+Spec = "https://github.com/MaxonT/traces.md/blob/main/SPEC.md"
 
 [project.scripts]
 traces = "traces.cli:main"

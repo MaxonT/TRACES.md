@@ -1,4 +1,4 @@
-# What: CI for traces-md: the offline test suite on three Python versions, plus the repo's own traces.
+# What: CI for traces.md: the offline test suite on three Python versions, plus the repo's own traces.
 # Why: every push and PR proves the suite is green, the examples validate, and the dogfooded .trace/ is honest.
 # How: runs automatically on push to main and on pull requests; no secrets needed.
 name: ci
