@@ -128,3 +128,9 @@ x-timestamps: backfilled steps use git, GitHub API (PR and Actions run times), f
 2026-10-12T19:06:00-05:00 | edit: tests/test_cli.py | add the missing import | ok: 1 line
 2026-10-12T19:07:03-05:00 | shell: /tmp/tmd-venv/bin/python -W error::ResourceWarning -m unittest discover -s tests | run the suite with setuptools available | ok: exit 0
 2026-10-12T19:07:07-05:00 | shell: python3.11 -m unittest discover -s tests | run the suite on Python 3.11 | ok: exit 0
+2026-10-12T19:10:22-05:00 | shell: git commit; git push; gh pr create (PR 10) | commit the build fixes and open PR 10 | ok: https://github.com/MaxonT/TRACES.md/pull/10
+2026-10-12T19:10:22-05:00 | shell: gh pr checks; gh api issues/10/comments | read CI and the Codex review | partial: CI 3.9, 3.11, 3.13 pass; Codex review not posted after 100 s, merged on green CI
+2026-10-12T19:10:22-05:00 | shell: gh pr merge 10 --squash; aisync log; git worktree remove ../traces-md.wt-fix | merge PR 10 and log it | ok: 830ed29
+2026-10-12T19:10:22-05:00 | shell: git worktree add ../traces-md.wt-rel -b chore/publish-v0-1-2 origin/main; aisync claim | create a publish worktree for v0.1.2 | ok: base 830ed29
+2026-10-12T19:10:22-05:00 | edit: pyproject.toml, traces/__init__.py, tests/test_repo.py, tests/test_install.py, north_star.md | bump the CLI to 0.1.2, keep spec 0.1.1; versions share MAJOR.MINOR | ok: 5 files
+2026-10-12T19:10:25-05:00 | shell: /tmp/tmd-venv/bin/python -W error::ResourceWarning -m unittest discover -s tests | run the suite with setuptools available | ok: exit 0
