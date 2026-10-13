@@ -163,3 +163,11 @@ x-timestamps: backfilled steps use git, GitHub API (PR and Actions run times), f
 2026-10-12T19:31:00-05:00 | edit: tests/test_cli.py | pin TZ=America/Chicago for every CLI test in CliCase.setUp | ok
 2026-10-12T19:31:09-05:00 | shell: TZ=<zone> python3 -m unittest discover -s tests; python3.11 -m unittest discover -s tests | rerun the suite in five zones and on 3.11 | ok: all OK
 2026-10-12T19:31:20-05:00 | shell: traces append (zsh) | first append batch | fail: zsh did not word-split the command variable; nothing was appended; retried with a function
+2026-10-12T19:33:50-05:00 | shell: traces new; traces run; traces show; traces append; traces validate; traces stats | dry-run the P2a demo commands in a throwaway copy of /tmp/tmd-demo | ok: every command behaved as the demo needs, including the E040 check on a lying append
+2026-10-12T19:36:00-05:00 | shell: gh api pulls/12/reviews | read the fifth review on 63e2ca2 | ok: Didn't find any major issues; CI 3.9/3.11/3.13 pass
+2026-10-12T19:38:57-05:00 | shell: gh pr merge 12 --squash; git worktree remove | merge PR 12 and remove its worktree | ok: ecb9c6e
+2026-10-12T19:38:57-05:00 | edit: pyproject.toml, traces/__init__.py | bump the CLI to 0.1.3; spec stays traces/0.1.1 | ok
+2026-10-12T19:39:10-05:00 | shell: traces validate --strict .trace | check the trace before the v0.1.3 commit | fail: W002 on the dry-run line wording; reworded that uncommitted line, nothing committed
+2026-10-12T21:17:45-05:00 | wait: the owner's next message | idle between turns; the session paused after the failed commit | ok
+2026-10-12T21:17:45-05:00 | shell: traces validate --strict .trace | recheck after rewording | fail: E040: the reworded detail itself quoted an exit code; reworded again without one
+2026-10-12T21:17:45-05:00 | shell: python3 ~/projects/gh-jobs/ghjobs.py status | read the KiroCrew gh-jobs handoff and check job health | ok: traffic, signals, build ok; notion jobs not run yet
