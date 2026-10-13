@@ -19,7 +19,10 @@ class VersionTests(unittest.TestCase):
         pyproject = (ROOT / "pyproject.toml").read_text()
         version = re.search(r'^version = "([^"]+)"', pyproject, re.M).group(1)
         self.assertEqual(version, traces.__version__)
-        self.assertEqual(version, model.SPEC_VERSION, "0.x: package and spec move together")
+        # the CLI implements the spec: same MAJOR.MINOR; a CLI-only fix moves the patch number alone
+        self.assertEqual(version.split(".")[:2], model.SPEC_VERSION.split(".")[:2])
+        self.assertGreaterEqual(tuple(map(int, version.split("."))),
+                                tuple(map(int, model.SPEC_VERSION.split("."))))
         self.assertIn("traces/" + model.SPEC_VERSION, (ROOT / "SPEC.md").read_text())
         self.assertIn("`%s`" % model.SPEC_VERSION, (ROOT / "north_star.md").read_text())
 
