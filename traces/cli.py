@@ -224,7 +224,7 @@ def cmd_cat(args) -> int:
 def _load_all(paths: Sequence[str]):
     """Parse every trace file; unreadable or broken ones are skipped and reported, not fatal."""
     files, _skipped = validate.collect(paths)
-    files = validate.drop_twins(files)
+    files, divergent = validate.drop_twins(files)
     good, bad = [], []
     for f in files:
         trace, issues = model.load(f)
@@ -233,11 +233,11 @@ def _load_all(paths: Sequence[str]):
             bad.append((str(f), errs[0]))
         else:
             good.append((str(f), trace))
-    return good, bad
+    return good, bad, divergent
 
 
 def cmd_stats(args) -> int:
-    good, bad = _load_all(_target_paths(args.paths, args.dir))
+    good, bad, divergent = _load_all(_target_paths(args.paths, args.dir))
     if args.agent:
         good = [(p, t) for p, t in good if t.agent == args.agent]
     if args.since:
@@ -247,23 +247,35 @@ def cmd_stats(args) -> int:
             raise UsageError("--since needs YYYY-MM-DD, got %r" % args.since)
         good = [(p, t) for p, t in good
                 if (model.parse_ts(t.started) or cutoff) >= cutoff]
+    in_scope = {p for p, _t in good}
+    # report a pair only when both files are in what is actually counted
+    divergent = [(m, j) for m, j in divergent if str(m) in in_scope and str(j) in in_scope]
     data = stats.compute(good)
     data["skipped_unreadable"] = [{"path": p, "problem": i.format()} for p, i in bad]
+    data["divergent_twins"] = [[str(m), str(j)] for m, j in divergent]
     if args.json:
         _emit_json(data)
     else:
         print(stats.render_text(data))
         for p, i in bad:
             print("skipped %s: %s" % (p, i.format()), file=sys.stderr)
+    for m, j in divergent:
+        print("traces: warning: %s and %s differ; both counted. To keep one form, delete the "
+              "stale file, then regenerate it if needed: traces fmt --to %s -w <the file you kept>"
+              % (m, j, "md|jsonl"), file=sys.stderr)
     return EXIT_OK
 
 
 def cmd_status(args) -> int:
     paths = _target_paths(args.paths, args.dir)
     reports = validate.check_paths(paths)
-    counted = {str(p) for p in validate.drop_twins([Path(r.path) for r in reports])}
+    named = [Path(r.path) for r in reports if model.split_name(Path(r.path).name)]  # W007 skips excluded
+    kept, divergent = validate.drop_twins(named)
+    counted = {str(p) for p in kept}
     good = [(r.path, r.trace) for r in reports
             if r.trace is not None and not r.errors and r.path in counted]
+    in_good = {p for p, _t in good}  # fully validated and counted
+    divergent = [(m, j) for m, j in divergent if str(m) in in_good and str(j) in in_good]
     data = stats.compute([(p, t) for p, t in good])
     invalid = [r for r in reports if r.errors]
     now = datetime.now().astimezone()
@@ -279,6 +291,8 @@ def cmd_status(args) -> int:
     alerts: List[str] = []
     for r in invalid:
         alerts.append("invalid trace %s: %s" % (r.path, r.errors[0].format()))
+    for m, j in divergent:
+        alerts.append("%s and %s are the same task in two forms but differ; both counted" % (m, j))
     if args.max_failure_rate is not None and data["failure_rate"] > args.max_failure_rate:
         alerts.append("failure rate %.1f%% is above the limit %.1f%%" % (
             data["failure_rate"] * 100, args.max_failure_rate * 100))
