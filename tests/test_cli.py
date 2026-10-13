@@ -40,8 +40,12 @@ class CliCase(unittest.TestCase):
         env = {k: v for k, v in os.environ.items() if not k.startswith("TRACES_")}
         # an empty home, so a real ~/.ai-sync/traces on the developer's machine never leaks in
         env["HOME"] = env["USERPROFILE"] = self.tmp
+        env["TZ"] = "America/Chicago"  # --since is a local date; pin the zone so CI in UTC agrees
         self.env = mock.patch.dict(os.environ, env, clear=True)
         self.env.start()
+        if hasattr(time, "tzset"):
+            time.tzset()
+            self.addCleanup(time.tzset)  # runs after tearDown has restored the environment
 
     def tearDown(self):
         self.env.stop()
@@ -452,6 +456,8 @@ class TwinTests(CliCase):
         self.assertFalse(any("differ" in a for a in status["alerts"]), status["alerts"])
 
     def test_a_pair_split_by_since_is_not_reported_as_both_counted(self):
+        if not hasattr(time, "tzset"):
+            self.skipTest("needs time.tzset")  # the zone pin in setUp only works with tzset
         d = Path(self.tmp) / ".trace"
         j = d / "2026-10-11-codex-add-csv-export.jsonl"
         lines = j.read_text().splitlines()

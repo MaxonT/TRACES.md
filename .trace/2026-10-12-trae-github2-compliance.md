@@ -155,3 +155,11 @@ x-timestamps: backfilled steps use git, GitHub API (PR and Actions run times), f
 2026-10-12T19:25:48-05:00 | shell: gh api pulls/12/comments | read the third review | partial: 2 new P2: a pair split by --since and a twin failing validation (E033) were still reported as both counted
 2026-10-12T19:25:48-05:00 | edit: traces/cli.py, tests/test_cli.py | report a divergent pair only when both files are in the counted set, in stats and status | ok: 2 files, 2 new tests
 2026-10-12T19:25:51-05:00 | shell: /tmp/tmd-venv/bin/python -W error::ResourceWarning -m unittest discover -s tests | run the suite with setuptools available | ok: exit 0
+2026-10-12T19:26:30-05:00 | shell: git commit; git push; gh pr comment 12 '@codex review' | push the split-pair fix and request a review | ok: 89411f5
+2026-10-12T19:28:00-05:00 | shell: gh pr checks 12 | read CI for 89411f5 | fail: test_a_pair_split_by_since failed on the UTC runners: --since is a local date
+2026-10-12T19:28:00-05:00 | shell: gh api pulls/12/comments | read the fourth review | partial: P1 timezone-dependent test; P2 the traces fmt reconcile hint did not work
+2026-10-12T19:29:00-05:00 | edit: tests/test_cli.py, traces/cli.py | pin TZ in that test and replace the stderr hint with delete-then-regenerate | ok
+2026-10-12T19:30:24-05:00 | shell: TZ=<zone> python3 -m unittest discover -s tests | run the suite in UTC, Asia/Tokyo, Pacific/Kiritimati, America/Chicago | fail: Tokyo 1, Kiritimati 2 failures: test_stats_text_and_json and the divergent-twin --since check also depend on the zone
+2026-10-12T19:31:00-05:00 | edit: tests/test_cli.py | pin TZ=America/Chicago for every CLI test in CliCase.setUp | ok
+2026-10-12T19:31:09-05:00 | shell: TZ=<zone> python3 -m unittest discover -s tests; python3.11 -m unittest discover -s tests | rerun the suite in five zones and on 3.11 | ok: all OK
+2026-10-12T19:31:20-05:00 | shell: traces append (zsh) | first append batch | fail: zsh did not word-split the command variable; nothing was appended; retried with a function

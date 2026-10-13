@@ -260,8 +260,9 @@ def cmd_stats(args) -> int:
         for p, i in bad:
             print("skipped %s: %s" % (p, i.format()), file=sys.stderr)
     for m, j in divergent:
-        print("traces: warning: %s and %s differ; both counted (run `traces fmt` to reconcile)"
-              % (m, j), file=sys.stderr)
+        print("traces: warning: %s and %s differ; both counted. To keep one form, delete the "
+              "stale file, then regenerate it if needed: traces fmt --to %s -w <the file you kept>"
+              % (m, j, "md|jsonl"), file=sys.stderr)
     return EXIT_OK
 
 
