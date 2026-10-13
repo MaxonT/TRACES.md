@@ -214,11 +214,26 @@ def check_file(path) -> FileReport:
     return FileReport(str(p), trace, check_trace(trace, parse_issues, p))
 
 
-def drop_twins(files: Sequence[Path]) -> List[Path]:
-    """One trace per task: drop X.jsonl when X.md is also in the list (the same trace, two forms)."""
-    names = {Path(f).resolve() for f in files}
-    return [Path(f) for f in files
-            if not (str(f).endswith(".jsonl") and Path(f).resolve().with_suffix(".md") in names)]
+def drop_twins(files: Sequence[Path]) -> Tuple[List[Path], List[Tuple[Path, Path]]]:
+    """One trace per task. X.jsonl is dropped only when X.md is in the list AND both hold the same
+    header and steps (the same trace, two forms). Twins that differ (e.g. one was appended to after a
+    conversion) are both kept and returned as divergent, so no recorded step is ever hidden."""
+    by_name = {Path(f).resolve(): Path(f) for f in files}
+    kept: List[Path] = []
+    divergent: List[Tuple[Path, Path]] = []
+    for f in files:
+        f = Path(f)
+        md = by_name.get(f.resolve().with_suffix(".md")) if str(f).endswith(".jsonl") else None
+        if md is not None:
+            a, ia = model.load(md)
+            b, ib = model.load(f)
+            same = (not [i for i in ia + ib if i.level == "error"]
+                    and a.header == b.header and a.steps == b.steps)
+            if same:
+                continue
+            divergent.append((md, f))
+        kept.append(f)
+    return kept, divergent
 
 
 def collect(paths: Sequence) -> Tuple[List[Path], List[Path]]:

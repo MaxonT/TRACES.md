@@ -404,6 +404,26 @@ class TwinTests(CliCase):
             f.unlink()
         self.assertEqual(json.loads(run("stats", "--json")[1])["traces"], 3)
 
+    def test_divergent_twins_are_both_counted_and_raise_an_alert(self):
+        # after a conversion, a later step goes into the JSONL copy only: it must not be hidden
+        d = Path(self.tmp) / ".trace"
+        j = d / "2026-10-12-claude-code-fix-date-parser.jsonl"
+        code, _, err = run("append", str(j), "-t", "shell: make deploy", "-a", "deploy",
+                           "-s", "fail", "-d", "exit 1, timeout")
+        self.assertEqual(code, 0, err)
+        code, out, err = run("stats", "--json")
+        data = json.loads(out)
+        self.assertEqual(data["traces"], 4)
+        self.assertEqual(data["outcomes"]["fail"], 5 + 1 + 1, "the JSONL-only failure is counted")
+        self.assertEqual(len(data["divergent_twins"]), 1)
+        self.assertIn("differ", err)
+        code, out, err = run("status", "--check")
+        self.assertEqual(code, 1)
+        self.assertIn("differ", err)
+        self.assertEqual(json.loads(run("status", "--json")[1])["traces"], 4)
+        pair = json.loads(run("stats", "--json")[1])["divergent_twins"][0]
+        self.assertEqual([Path(p).name for p in pair], [j.with_suffix(".md").name, j.name])
+
 
 class ReadCommandTests(CliCase):
     def setUp(self):
