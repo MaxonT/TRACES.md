@@ -146,3 +146,8 @@ x-timestamps: backfilled steps use git, GitHub API (PR and Actions run times), f
 2026-10-12T19:17:03-05:00 | shell: /tmp/tmd-venv/bin/python -m unittest discover -s tests | run the suite | fail: exit 1, 141 tests, 1 failed: the new test expected 2 codex traces, there is 1
 2026-10-12T19:17:04-05:00 | edit: tests/test_cli.py | expect 1 codex trace (md and jsonl twin count once) | ok: 1 line
 2026-10-12T19:17:06-05:00 | shell: /tmp/tmd-venv/bin/python -W error::ResourceWarning -m unittest discover -s tests | run the suite with setuptools available | ok: exit 0
+2026-10-12T19:22:18-05:00 | shell: git commit; git push (PR 12 second commit) | push the two P2 fixes | ok: a53e96a
+2026-10-12T19:22:18-05:00 | shell: gh pr comment 12 --body '@codex review' | ask the review bot to review the new commit | ok: comment posted on our own PR
+2026-10-12T19:22:18-05:00 | shell: gh api pulls/12/comments | read the second review | partial: 1 new P2: a twin pair with a parse error is reported as divergent and counted, but the broken file is skipped
+2026-10-12T19:22:18-05:00 | edit: traces/validate.py, tests/test_cli.py | report a broken twin only as skipped/invalid, never as a counted divergent pair | ok: 2 files, 1 new test
+2026-10-12T19:22:21-05:00 | shell: /tmp/tmd-venv/bin/python -W error::ResourceWarning -m unittest discover -s tests | run the suite with setuptools available | ok: exit 0

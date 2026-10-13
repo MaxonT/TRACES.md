@@ -227,11 +227,11 @@ def drop_twins(files: Sequence[Path]) -> Tuple[List[Path], List[Tuple[Path, Path
         if md is not None:
             a, ia = model.load(md)
             b, ib = model.load(f)
-            same = (not [i for i in ia + ib if i.level == "error"]
-                    and a.header == b.header and a.steps == b.steps)
-            if same:
+            broken = [i for i in ia + ib if i.level == "error"]
+            if not broken and a.header == b.header and a.steps == b.steps:
                 continue
-            divergent.append((md, f))
+            if not broken:  # a broken file is reported as skipped/invalid, not as a counted twin
+                divergent.append((md, f))
         kept.append(f)
     return kept, divergent
 

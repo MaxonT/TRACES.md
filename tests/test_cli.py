@@ -428,6 +428,18 @@ class TwinTests(CliCase):
         self.assertEqual((scoped["traces"], scoped["divergent_twins"]), (1, []))
         self.assertEqual(json.loads(run("stats", "--json", "--since", "2026-10-13")[1])["divergent_twins"], [])
 
+    def test_a_broken_twin_is_reported_as_invalid_not_as_divergent(self):
+        j = Path(self.tmp) / ".trace" / "2026-10-11-codex-add-csv-export.jsonl"
+        j.write_text("not json\n")
+        code, out, err = run("stats", "--json")
+        data = json.loads(out)
+        self.assertEqual((data["traces"], data["divergent_twins"]), (3, []))
+        self.assertEqual(len(data["skipped_unreadable"]), 1)
+        self.assertNotIn("differ", err)
+        status = json.loads(run("status", "--json")[1])
+        self.assertEqual((status["traces"], status["invalid"]), (3, 1))
+        self.assertFalse(any("differ" in a for a in status["alerts"]))
+
     def test_stray_non_trace_files_with_the_same_stem_never_alert(self):
         d = Path(self.tmp) / ".trace"
         (d / "README.md").write_text("notes\n")
