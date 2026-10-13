@@ -171,3 +171,25 @@ x-timestamps: backfilled steps use git, GitHub API (PR and Actions run times), f
 2026-10-12T21:17:45-05:00 | wait: the owner's next message | idle between turns; the session paused after the failed commit | ok
 2026-10-12T21:17:45-05:00 | shell: traces validate --strict .trace | recheck after rewording | fail: E040: the reworded detail itself quoted an exit code; reworded again without one
 2026-10-12T21:17:45-05:00 | shell: python3 ~/projects/gh-jobs/ghjobs.py status | read the KiroCrew gh-jobs handoff and check job health | ok: traffic, signals, build ok; notion jobs not run yet
+2026-10-12T21:18:30-05:00 | shell: git commit; git push; gh pr create | open PR 13 for v0.1.3 | ok: PR 13 (time approx)
+2026-10-12T21:19:30-05:00 | shell: gh pr checks 13 --watch | wait for CI on PR 13 | ok: 3.9, 3.11, 3.13 pass (time approx)
+2026-10-12T21:20:00-05:00 | shell: gh pr merge 13 --squash; git tag -a v0.1.3; git push origin v0.1.3 | merge PR 13 and tag v0.1.3 | ok: 0b1873e (time approx)
+2026-10-12T21:20:30-05:00 | shell: gh api /users/MaxonT/packages/container/traces/versions | list ghcr versions | fail: HTTP 403: token lacks read:packages; used the anonymous registry check instead (time approx)
+2026-10-12T21:21:00-05:00 | shell: curl ghcr.io/v2/maxont/traces/tags/list; gh release view v0.1.3; pip install the release wheel | verify the v0.1.3 release | ok: wheel+sdist attached; tags 0.1.0-0.1.3 + latest; traces 0.1.3 runs (time approx)
+2026-10-12T21:21:30-05:00 | shell: traces run -- python3 -m unittest (dry run) | check the demo traceback for recorder leak patterns | ok: Homebrew python@ path would trip the e-mail check; rebuilt the demo venv on system Python 3.9 (time approx)
+2026-10-12T21:28:40-05:00 | shell: python3 -m promote.record terminal | record the P2a terminal demo in /tmp/tmd-demo with traces 0.1.3 | ok: raw/terminal.mp4, 55.4 s
+2026-10-12T21:30:00-05:00 | shell: python3 -m promote.record page x4 | record the GitHub page, site home EN and ZH, install page | ok: 4 files
+2026-10-12T21:31:00-05:00 | shell: cmp site-home.mp4 site-home.zh.mp4 | check the Chinese site take | partial: identical: the site has no Chinese page; deleted it and recorded README.zh on GitHub instead
+2026-10-12T21:33:00-05:00 | shell: ffmpeg frame sheets | look at 3 frames per raw clip | partial: terminal fine; both GitHub page takes black in the second half (page height too large)
+2026-10-12T21:36:00-05:00 | edit: promote_out/TRACES.md/p2a/storyboard.json | write the 82 s storyboard; check_storyboard --raw | ok: passes first run (time approx)
+2026-10-12T21:38:00-05:00 | shell: promote.record page x2; promote.check_video --spec raw | re-record both GitHub pages at page height 5000 | ok: content to the end; all 5 raw clips pass (time approx)
+2026-10-12T21:39:00-05:00 | shell: python3 -m promote.voice --lang en\|zh | synthesize narration and subtitles | fail: en ok; zh shots 2 and 7 too long (time approx)
+2026-10-12T21:39:30-05:00 | edit: storyboard.json narration_zh; promote.voice --lang zh | shorten two Chinese lines, then one again | ok: problems empty; both srt checks pass (time approx)
+2026-10-12T21:40:00-05:00 | shell: python3 -m promote.assemble --lang en\|zh; promote.check_video | assemble master, vertical and covers | ok: 82 s master, 48 s vertical, qc problems empty; frames checked by eye (time approx)
+2026-10-12T21:40:30-05:00 | shell: python3 -m promote.script --lang en\|zh | write the owner shooting scripts | fail: p2e directory did not exist (time approx)
+2026-10-12T21:40:45-05:00 | shell: mkdir p2e; python3 -m promote.script --lang en\|zh | rerun after creating the directory | ok: script.en.md, script.zh.md (time approx)
+2026-10-12T21:41:17-05:00 | shell: unittest; traces stats .trace; gh release view | refresh facts.txt with current numbers | ok: 140 tests, v0.1.3, own traces 261 steps 28 fail
+2026-10-12T21:43:00-05:00 | shell: python3 -m promote.check_copy --facts | check the 7 channel drafts | fail: hype word in 2 zh drafts, then a python@ version string in juejin matched the private check (time approx)
+2026-10-12T21:43:30-05:00 | edit: p3/bilibili.md, v2ex.md, juejin.md; promote.check_copy | reword and recheck | ok: all 7 pass (time approx)
+2026-10-12T21:44:00-05:00 | shell: python3 -m promote.check_schedule | check the launch calendar, D0 2026-10-27 | fail: read the file while it was still being written (time approx)
+2026-10-12T21:44:49-05:00 | shell: python3 -m promote.check_schedule --out schedule.md | rerun the calendar check | ok: 7 posts pass; schedule.md written; nothing posted
