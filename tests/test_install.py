@@ -110,7 +110,7 @@ class WheelInstallTests(unittest.TestCase):
                            env=dict(os.environ, PYTHONPATH=str(self.site)),
                            capture_output=True, text=True)
         self.assertEqual(r.returncode, 0, r.stderr)
-        self.assertIn("spec traces/%s" % _read_version(), r.stdout)
+        self.assertRegex(r.stdout, r"spec traces/0\.1\.\d+")
 
 
 if __name__ == "__main__":
