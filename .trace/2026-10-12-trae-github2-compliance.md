@@ -151,3 +151,7 @@ x-timestamps: backfilled steps use git, GitHub API (PR and Actions run times), f
 2026-10-12T19:22:18-05:00 | shell: gh api pulls/12/comments | read the second review | partial: 1 new P2: a twin pair with a parse error is reported as divergent and counted, but the broken file is skipped
 2026-10-12T19:22:18-05:00 | edit: traces/validate.py, tests/test_cli.py | report a broken twin only as skipped/invalid, never as a counted divergent pair | ok: 2 files, 1 new test
 2026-10-12T19:22:21-05:00 | shell: /tmp/tmd-venv/bin/python -W error::ResourceWarning -m unittest discover -s tests | run the suite with setuptools available | ok: exit 0
+2026-10-12T19:25:48-05:00 | shell: git commit; git push; gh pr comment 12 '@codex review' | push the broken-twin fix and request a review | ok: 5c11145
+2026-10-12T19:25:48-05:00 | shell: gh api pulls/12/comments | read the third review | partial: 2 new P2: a pair split by --since and a twin failing validation (E033) were still reported as both counted
+2026-10-12T19:25:48-05:00 | edit: traces/cli.py, tests/test_cli.py | report a divergent pair only when both files are in the counted set, in stats and status | ok: 2 files, 2 new tests
+2026-10-12T19:25:51-05:00 | shell: /tmp/tmd-venv/bin/python -W error::ResourceWarning -m unittest discover -s tests | run the suite with setuptools available | ok: exit 0

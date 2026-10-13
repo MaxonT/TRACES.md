@@ -248,7 +248,8 @@ def cmd_stats(args) -> int:
         good = [(p, t) for p, t in good
                 if (model.parse_ts(t.started) or cutoff) >= cutoff]
     in_scope = {p for p, _t in good}
-    divergent = [(m, j) for m, j in divergent if str(m) in in_scope or str(j) in in_scope]
+    # report a pair only when both files are in what is actually counted
+    divergent = [(m, j) for m, j in divergent if str(m) in in_scope and str(j) in in_scope]
     data = stats.compute(good)
     data["skipped_unreadable"] = [{"path": p, "problem": i.format()} for p, i in bad]
     data["divergent_twins"] = [[str(m), str(j)] for m, j in divergent]
@@ -272,6 +273,8 @@ def cmd_status(args) -> int:
     counted = {str(p) for p in kept}
     good = [(r.path, r.trace) for r in reports
             if r.trace is not None and not r.errors and r.path in counted]
+    in_good = {p for p, _t in good}  # fully validated and counted
+    divergent = [(m, j) for m, j in divergent if str(m) in in_good and str(j) in in_good]
     data = stats.compute([(p, t) for p, t in good])
     invalid = [r for r in reports if r.errors]
     now = datetime.now().astimezone()

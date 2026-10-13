@@ -440,6 +440,27 @@ class TwinTests(CliCase):
         self.assertEqual((status["traces"], status["invalid"]), (3, 1))
         self.assertFalse(any("differ" in a for a in status["alerts"]))
 
+    def test_a_twin_that_fails_validation_is_invalid_not_a_counted_pair(self):
+        d = Path(self.tmp) / ".trace"
+        j = d / "2026-10-11-codex-add-csv-export.jsonl"
+        lines = j.read_text().splitlines()
+        head = json.loads(lines[0])
+        head["started"] = "2026-10-11T23:59:00-05:00"  # parses, but steps now precede started (E033)
+        j.write_text("\n".join([json.dumps(head)] + lines[1:]) + "\n")
+        status = json.loads(run("status", "--json")[1])
+        self.assertEqual((status["traces"], status["invalid"]), (3, 1))
+        self.assertFalse(any("differ" in a for a in status["alerts"]), status["alerts"])
+
+    def test_a_pair_split_by_since_is_not_reported_as_both_counted(self):
+        d = Path(self.tmp) / ".trace"
+        j = d / "2026-10-11-codex-add-csv-export.jsonl"
+        lines = j.read_text().splitlines()
+        head = json.loads(lines[0])
+        head["started"] = "2026-10-11T14:02:10+14:00"   # same file date, earlier instant
+        j.write_text("\n".join([json.dumps(head)] + lines[1:]) + "\n")
+        data = json.loads(run("stats", "--json", "--since", "2026-10-11")[1])
+        self.assertEqual(data["divergent_twins"], [])
+
     def test_stray_non_trace_files_with_the_same_stem_never_alert(self):
         d = Path(self.tmp) / ".trace"
         (d / "README.md").write_text("notes\n")
