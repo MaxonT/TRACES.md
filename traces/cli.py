@@ -247,6 +247,8 @@ def cmd_stats(args) -> int:
             raise UsageError("--since needs YYYY-MM-DD, got %r" % args.since)
         good = [(p, t) for p, t in good
                 if (model.parse_ts(t.started) or cutoff) >= cutoff]
+    in_scope = {p for p, _t in good}
+    divergent = [(m, j) for m, j in divergent if str(m) in in_scope or str(j) in in_scope]
     data = stats.compute(good)
     data["skipped_unreadable"] = [{"path": p, "problem": i.format()} for p, i in bad]
     data["divergent_twins"] = [[str(m), str(j)] for m, j in divergent]
@@ -265,7 +267,8 @@ def cmd_stats(args) -> int:
 def cmd_status(args) -> int:
     paths = _target_paths(args.paths, args.dir)
     reports = validate.check_paths(paths)
-    kept, divergent = validate.drop_twins([Path(r.path) for r in reports])
+    named = [Path(r.path) for r in reports if model.split_name(Path(r.path).name)]  # W007 skips excluded
+    kept, divergent = validate.drop_twins(named)
     counted = {str(p) for p in kept}
     good = [(r.path, r.trace) for r in reports
             if r.trace is not None and not r.errors and r.path in counted]

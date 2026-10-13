@@ -423,6 +423,18 @@ class TwinTests(CliCase):
         self.assertEqual(json.loads(run("status", "--json")[1])["traces"], 4)
         pair = json.loads(run("stats", "--json")[1])["divergent_twins"][0]
         self.assertEqual([Path(p).name for p in pair], [j.with_suffix(".md").name, j.name])
+        # filters apply to the diagnostic too
+        scoped = json.loads(run("stats", "--json", "--agent", "codex")[1])
+        self.assertEqual((scoped["traces"], scoped["divergent_twins"]), (1, []))
+        self.assertEqual(json.loads(run("stats", "--json", "--since", "2026-10-13")[1])["divergent_twins"], [])
+
+    def test_stray_non_trace_files_with_the_same_stem_never_alert(self):
+        d = Path(self.tmp) / ".trace"
+        (d / "README.md").write_text("notes\n")
+        (d / "README.jsonl").write_text("{}\n")
+        code, out, err = run("status", "--check", "--json")
+        self.assertEqual(code, 0, out + err)
+        self.assertEqual(json.loads(out)["alerts"], [])
 
 
 class ReadCommandTests(CliCase):

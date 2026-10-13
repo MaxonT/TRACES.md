@@ -140,3 +140,9 @@ x-timestamps: backfilled steps use git, GitHub API (PR and Actions run times), f
 2026-10-12T19:14:21-05:00 | shell: git worktree add ../traces-md.wt-twins -b fix/build-divergent-twins origin/main; aisync claim | create a build worktree for the P1 finding | ok: base 68f251b
 2026-10-12T19:14:21-05:00 | edit: traces/validate.py, traces/cli.py, tests/test_cli.py | drop a JSONL twin only when header and steps equal the Markdown form; keep divergent twins, warn in stats, alert in status | ok: 3 files, 1 new test
 2026-10-12T19:14:24-05:00 | shell: /tmp/tmd-venv/bin/python -W error::ResourceWarning -m unittest discover -s tests | run the suite with setuptools available | ok: exit 0
+2026-10-12T19:17:03-05:00 | shell: git commit; git push; gh pr create (PR 12) | open PR 12 with the divergent-twin fix | ok: https://github.com/MaxonT/TRACES.md/pull/12
+2026-10-12T19:17:03-05:00 | shell: gh pr checks; gh api pulls/12/comments | read CI and the Codex review before merging | partial: CI pass; 2 P2 findings: stray non-trace files enter twin detection, stats filters do not apply to divergent_twins
+2026-10-12T19:17:03-05:00 | edit: traces/cli.py, tests/test_cli.py | pass only trace-named files to twin detection; scope divergent_twins to --agent and --since | ok: 2 files, 1 new test, 1 extended
+2026-10-12T19:17:03-05:00 | shell: /tmp/tmd-venv/bin/python -m unittest discover -s tests | run the suite | fail: exit 1, 141 tests, 1 failed: the new test expected 2 codex traces, there is 1
+2026-10-12T19:17:04-05:00 | edit: tests/test_cli.py | expect 1 codex trace (md and jsonl twin count once) | ok: 1 line
+2026-10-12T19:17:06-05:00 | shell: /tmp/tmd-venv/bin/python -W error::ResourceWarning -m unittest discover -s tests | run the suite with setuptools available | ok: exit 0
