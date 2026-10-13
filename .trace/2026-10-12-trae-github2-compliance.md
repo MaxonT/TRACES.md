@@ -134,3 +134,32 @@ x-timestamps: backfilled steps use git, GitHub API (PR and Actions run times), f
 2026-10-12T19:10:22-05:00 | shell: git worktree add ../traces-md.wt-rel -b chore/publish-v0-1-2 origin/main; aisync claim | create a publish worktree for v0.1.2 | ok: base 830ed29
 2026-10-12T19:10:22-05:00 | edit: pyproject.toml, traces/__init__.py, tests/test_repo.py, tests/test_install.py, north_star.md | bump the CLI to 0.1.2, keep spec 0.1.1; versions share MAJOR.MINOR | ok: 5 files
 2026-10-12T19:10:25-05:00 | shell: /tmp/tmd-venv/bin/python -W error::ResourceWarning -m unittest discover -s tests | run the suite with setuptools available | ok: exit 0
+2026-10-12T19:14:21-05:00 | shell: git commit; git push; gh pr create (PR 11) | commit the v0.1.2 bump and open PR 11 | ok: https://github.com/MaxonT/TRACES.md/pull/11
+2026-10-12T19:14:21-05:00 | shell: gh pr checks; gh api issues/10,11 comments; pulls/10 comments | read CI and the Codex reviews before merging PR 11 | partial: CI pass; Codex on PR 10 (already merged): P1, dropping a JSONL twin that diverged from its Markdown form hides steps from stats and status
+2026-10-12T19:14:21-05:00 | shell: gh pr merge 11; git tag -a v0.1.2; git push origin v0.1.2 | merge PR 11 and tag v0.1.2 (the P1 finding was read in the same command output, after the merge) | partial: 68f251b, tag v0.1.2; release workflow success; v0.1.2 ships the twin defect
+2026-10-12T19:14:21-05:00 | shell: git worktree add ../traces-md.wt-twins -b fix/build-divergent-twins origin/main; aisync claim | create a build worktree for the P1 finding | ok: base 68f251b
+2026-10-12T19:14:21-05:00 | edit: traces/validate.py, traces/cli.py, tests/test_cli.py | drop a JSONL twin only when header and steps equal the Markdown form; keep divergent twins, warn in stats, alert in status | ok: 3 files, 1 new test
+2026-10-12T19:14:24-05:00 | shell: /tmp/tmd-venv/bin/python -W error::ResourceWarning -m unittest discover -s tests | run the suite with setuptools available | ok: exit 0
+2026-10-12T19:17:03-05:00 | shell: git commit; git push; gh pr create (PR 12) | open PR 12 with the divergent-twin fix | ok: https://github.com/MaxonT/TRACES.md/pull/12
+2026-10-12T19:17:03-05:00 | shell: gh pr checks; gh api pulls/12/comments | read CI and the Codex review before merging | partial: CI pass; 2 P2 findings: stray non-trace files enter twin detection, stats filters do not apply to divergent_twins
+2026-10-12T19:17:03-05:00 | edit: traces/cli.py, tests/test_cli.py | pass only trace-named files to twin detection; scope divergent_twins to --agent and --since | ok: 2 files, 1 new test, 1 extended
+2026-10-12T19:17:03-05:00 | shell: /tmp/tmd-venv/bin/python -m unittest discover -s tests | run the suite | fail: exit 1, 141 tests, 1 failed: the new test expected 2 codex traces, there is 1
+2026-10-12T19:17:04-05:00 | edit: tests/test_cli.py | expect 1 codex trace (md and jsonl twin count once) | ok: 1 line
+2026-10-12T19:17:06-05:00 | shell: /tmp/tmd-venv/bin/python -W error::ResourceWarning -m unittest discover -s tests | run the suite with setuptools available | ok: exit 0
+2026-10-12T19:22:18-05:00 | shell: git commit; git push (PR 12 second commit) | push the two P2 fixes | ok: a53e96a
+2026-10-12T19:22:18-05:00 | shell: gh pr comment 12 --body '@codex review' | ask the review bot to review the new commit | ok: comment posted on our own PR
+2026-10-12T19:22:18-05:00 | shell: gh api pulls/12/comments | read the second review | partial: 1 new P2: a twin pair with a parse error is reported as divergent and counted, but the broken file is skipped
+2026-10-12T19:22:18-05:00 | edit: traces/validate.py, tests/test_cli.py | report a broken twin only as skipped/invalid, never as a counted divergent pair | ok: 2 files, 1 new test
+2026-10-12T19:22:21-05:00 | shell: /tmp/tmd-venv/bin/python -W error::ResourceWarning -m unittest discover -s tests | run the suite with setuptools available | ok: exit 0
+2026-10-12T19:25:48-05:00 | shell: git commit; git push; gh pr comment 12 '@codex review' | push the broken-twin fix and request a review | ok: 5c11145
+2026-10-12T19:25:48-05:00 | shell: gh api pulls/12/comments | read the third review | partial: 2 new P2: a pair split by --since and a twin failing validation (E033) were still reported as both counted
+2026-10-12T19:25:48-05:00 | edit: traces/cli.py, tests/test_cli.py | report a divergent pair only when both files are in the counted set, in stats and status | ok: 2 files, 2 new tests
+2026-10-12T19:25:51-05:00 | shell: /tmp/tmd-venv/bin/python -W error::ResourceWarning -m unittest discover -s tests | run the suite with setuptools available | ok: exit 0
+2026-10-12T19:26:30-05:00 | shell: git commit; git push; gh pr comment 12 '@codex review' | push the split-pair fix and request a review | ok: 89411f5
+2026-10-12T19:28:00-05:00 | shell: gh pr checks 12 | read CI for 89411f5 | fail: test_a_pair_split_by_since failed on the UTC runners: --since is a local date
+2026-10-12T19:28:00-05:00 | shell: gh api pulls/12/comments | read the fourth review | partial: P1 timezone-dependent test; P2 the traces fmt reconcile hint did not work
+2026-10-12T19:29:00-05:00 | edit: tests/test_cli.py, traces/cli.py | pin TZ in that test and replace the stderr hint with delete-then-regenerate | ok
+2026-10-12T19:30:24-05:00 | shell: TZ=<zone> python3 -m unittest discover -s tests | run the suite in UTC, Asia/Tokyo, Pacific/Kiritimati, America/Chicago | fail: Tokyo 1, Kiritimati 2 failures: test_stats_text_and_json and the divergent-twin --since check also depend on the zone
+2026-10-12T19:31:00-05:00 | edit: tests/test_cli.py | pin TZ=America/Chicago for every CLI test in CliCase.setUp | ok
+2026-10-12T19:31:09-05:00 | shell: TZ=<zone> python3 -m unittest discover -s tests; python3.11 -m unittest discover -s tests | rerun the suite in five zones and on 3.11 | ok: all OK
+2026-10-12T19:31:20-05:00 | shell: traces append (zsh) | first append batch | fail: zsh did not word-split the command variable; nothing was appended; retried with a function

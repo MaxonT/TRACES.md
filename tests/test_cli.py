@@ -40,8 +40,12 @@ class CliCase(unittest.TestCase):
         env = {k: v for k, v in os.environ.items() if not k.startswith("TRACES_")}
         # an empty home, so a real ~/.ai-sync/traces on the developer's machine never leaks in
         env["HOME"] = env["USERPROFILE"] = self.tmp
+        env["TZ"] = "America/Chicago"  # --since is a local date; pin the zone so CI in UTC agrees
         self.env = mock.patch.dict(os.environ, env, clear=True)
         self.env.start()
+        if hasattr(time, "tzset"):
+            time.tzset()
+            self.addCleanup(time.tzset)  # runs after tearDown has restored the environment
 
     def tearDown(self):
         self.env.stop()
@@ -403,6 +407,73 @@ class TwinTests(CliCase):
         for f in (Path(self.tmp) / ".trace").glob("*.md"):
             f.unlink()
         self.assertEqual(json.loads(run("stats", "--json")[1])["traces"], 3)
+
+    def test_divergent_twins_are_both_counted_and_raise_an_alert(self):
+        # after a conversion, a later step goes into the JSONL copy only: it must not be hidden
+        d = Path(self.tmp) / ".trace"
+        j = d / "2026-10-12-claude-code-fix-date-parser.jsonl"
+        code, _, err = run("append", str(j), "-t", "shell: make deploy", "-a", "deploy",
+                           "-s", "fail", "-d", "exit 1, timeout")
+        self.assertEqual(code, 0, err)
+        code, out, err = run("stats", "--json")
+        data = json.loads(out)
+        self.assertEqual(data["traces"], 4)
+        self.assertEqual(data["outcomes"]["fail"], 5 + 1 + 1, "the JSONL-only failure is counted")
+        self.assertEqual(len(data["divergent_twins"]), 1)
+        self.assertIn("differ", err)
+        code, out, err = run("status", "--check")
+        self.assertEqual(code, 1)
+        self.assertIn("differ", err)
+        self.assertEqual(json.loads(run("status", "--json")[1])["traces"], 4)
+        pair = json.loads(run("stats", "--json")[1])["divergent_twins"][0]
+        self.assertEqual([Path(p).name for p in pair], [j.with_suffix(".md").name, j.name])
+        # filters apply to the diagnostic too
+        scoped = json.loads(run("stats", "--json", "--agent", "codex")[1])
+        self.assertEqual((scoped["traces"], scoped["divergent_twins"]), (1, []))
+        self.assertEqual(json.loads(run("stats", "--json", "--since", "2026-10-13")[1])["divergent_twins"], [])
+
+    def test_a_broken_twin_is_reported_as_invalid_not_as_divergent(self):
+        j = Path(self.tmp) / ".trace" / "2026-10-11-codex-add-csv-export.jsonl"
+        j.write_text("not json\n")
+        code, out, err = run("stats", "--json")
+        data = json.loads(out)
+        self.assertEqual((data["traces"], data["divergent_twins"]), (3, []))
+        self.assertEqual(len(data["skipped_unreadable"]), 1)
+        self.assertNotIn("differ", err)
+        status = json.loads(run("status", "--json")[1])
+        self.assertEqual((status["traces"], status["invalid"]), (3, 1))
+        self.assertFalse(any("differ" in a for a in status["alerts"]))
+
+    def test_a_twin_that_fails_validation_is_invalid_not_a_counted_pair(self):
+        d = Path(self.tmp) / ".trace"
+        j = d / "2026-10-11-codex-add-csv-export.jsonl"
+        lines = j.read_text().splitlines()
+        head = json.loads(lines[0])
+        head["started"] = "2026-10-11T23:59:00-05:00"  # parses, but steps now precede started (E033)
+        j.write_text("\n".join([json.dumps(head)] + lines[1:]) + "\n")
+        status = json.loads(run("status", "--json")[1])
+        self.assertEqual((status["traces"], status["invalid"]), (3, 1))
+        self.assertFalse(any("differ" in a for a in status["alerts"]), status["alerts"])
+
+    def test_a_pair_split_by_since_is_not_reported_as_both_counted(self):
+        if not hasattr(time, "tzset"):
+            self.skipTest("needs time.tzset")  # the zone pin in setUp only works with tzset
+        d = Path(self.tmp) / ".trace"
+        j = d / "2026-10-11-codex-add-csv-export.jsonl"
+        lines = j.read_text().splitlines()
+        head = json.loads(lines[0])
+        head["started"] = "2026-10-11T14:02:10+14:00"   # same file date, earlier instant
+        j.write_text("\n".join([json.dumps(head)] + lines[1:]) + "\n")
+        data = json.loads(run("stats", "--json", "--since", "2026-10-11")[1])
+        self.assertEqual(data["divergent_twins"], [])
+
+    def test_stray_non_trace_files_with_the_same_stem_never_alert(self):
+        d = Path(self.tmp) / ".trace"
+        (d / "README.md").write_text("notes\n")
+        (d / "README.jsonl").write_text("{}\n")
+        code, out, err = run("status", "--check", "--json")
+        self.assertEqual(code, 0, out + err)
+        self.assertEqual(json.loads(out)["alerts"], [])
 
 
 class ReadCommandTests(CliCase):
