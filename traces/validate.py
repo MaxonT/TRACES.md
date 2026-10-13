@@ -214,6 +214,13 @@ def check_file(path) -> FileReport:
     return FileReport(str(p), trace, check_trace(trace, parse_issues, p))
 
 
+def drop_twins(files: Sequence[Path]) -> List[Path]:
+    """One trace per task: drop X.jsonl when X.md is also in the list (the same trace, two forms)."""
+    names = {Path(f).resolve() for f in files}
+    return [Path(f) for f in files
+            if not (str(f).endswith(".jsonl") and Path(f).resolve().with_suffix(".md") in names)]
+
+
 def collect(paths: Sequence) -> Tuple[List[Path], List[Path]]:
     """Expand files and directories into (trace files, skipped files)."""
     files: List[Path] = []

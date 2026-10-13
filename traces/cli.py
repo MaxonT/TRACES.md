@@ -9,6 +9,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import shlex
 import subprocess
 import sys
 import time
@@ -158,7 +159,7 @@ def cmd_run(args) -> int:
         raise UsageError("nothing to run: use `traces run [FILE] -- <command> [args...]`")
     path = _one_file(args.file, None)
     cmd = list(args.command)
-    shown = " ".join(cmd)
+    shown = shlex.join(cmd)  # keeps quoting, so the recorded command can be re-run as is
     status, detail, code = "ok", "exit 0", 0
     try:
         proc = subprocess.run(cmd, capture_output=True, text=True, timeout=args.timeout)
@@ -223,6 +224,7 @@ def cmd_cat(args) -> int:
 def _load_all(paths: Sequence[str]):
     """Parse every trace file; unreadable or broken ones are skipped and reported, not fatal."""
     files, _skipped = validate.collect(paths)
+    files = validate.drop_twins(files)
     good, bad = [], []
     for f in files:
         trace, issues = model.load(f)
@@ -259,7 +261,9 @@ def cmd_stats(args) -> int:
 def cmd_status(args) -> int:
     paths = _target_paths(args.paths, args.dir)
     reports = validate.check_paths(paths)
-    good = [(r.path, r.trace) for r in reports if r.trace is not None and not r.errors]
+    counted = {str(p) for p in validate.drop_twins([Path(r.path) for r in reports])}
+    good = [(r.path, r.trace) for r in reports
+            if r.trace is not None and not r.errors and r.path in counted]
     data = stats.compute([(p, t) for p, t in good])
     invalid = [r for r in reports if r.errors]
     now = datetime.now().astimezone()
