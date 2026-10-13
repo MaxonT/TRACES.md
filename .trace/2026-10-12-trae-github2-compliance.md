@@ -105,3 +105,26 @@ x-timestamps: backfilled steps use git, GitHub API (PR and Actions run times), f
 2026-10-12T18:48:46-05:00 | shell: git worktree add ../traces-md.wt-trace -b docs/promote-goal-trace origin/main; aisync claim | create a worktree to commit the rest of this trace | ok: base 9c68538
 2026-10-12T18:49:00-05:00 | wait: owner approval | stop the promote flow at the P1 gate: P2 to P4 need an owner-approved pitch (approved_by) | partial: P1 done and checked; P2a, P2c, P2d, P2e, P3, P4 not started; nothing posted
 2026-10-12T18:49:27-05:00 | traces append | correct the previous step: a wait step is stamped when the wait ends (SPEC 4.3); the 18:49:00 step marks the start of the wait for owner approval, which has not ended | partial: start of wait recorded as a wait step; the closing wait step comes after approval
+2026-10-12T18:52:55-05:00 | shell: grep approved pitch.json; gh api graphql usesCustomOpenGraphImage; aisync tail | check for the owner's approval and the social preview | partial: no approval, no custom social preview; one unrelated shared-rule correction (factory WatchPaths)
+2026-10-12T18:53:26-05:00 | shell: grep approved pitch.json; gh api graphql usesCustomOpenGraphImage | check again on the third goal turn | partial: no approval, no custom social preview
+2026-10-12T18:53:30-05:00 | goal: update_goal blocked | mark the goal blocked after the same blocker on three consecutive turns | ok: blocked
+2026-10-12T18:55:00-05:00 | wait: owner approval | wait for the owner's approval of the P1 pitch | ok: owner: approve everything, record default approval as a rule
+2026-10-12T18:56:00-05:00 | shell: aisync rule add --agent trae --project traces-md | record the owner's default-approval rule in ai-sync | ok: 2026-10-12 18:56 CDT entry in ~/.ai-sync/preferences.md
+2026-10-12T18:57:00-05:00 | shell: git worktree add (the-greatness-lab, awesome-list-factory) -b docs/n-a-default-approval; aisync claim | prepare the meta-rule entry in both home bases | ok: 2 worktrees
+2026-10-12T18:58:00-05:00 | edit: AGENTS.md, tests/test_agents_md.py (both repos) | add the 18:56 meta-rule entry and a test that it stays | ok: 2 repos
+2026-10-12T18:59:30-05:00 | shell: python3 -m unittest discover -s tests (both repos) | run both suites | fail: lab: test badge 285 != 286; factory: NameError TEXT in the new test
+2026-10-12T19:00:00-05:00 | edit: README.md, README.zh-CN.md (lab), tests/test_agents_md.py (factory) | update the lab test badge and use self.text in the factory test | ok: 3 files
+2026-10-12T19:01:30-05:00 | shell: python3 -m unittest discover -s tests (both repos) | rerun both suites | ok: lab 286 OK, factory 457 OK
+2026-10-12T19:01:40-05:00 | shell: git add $FILES; git commit; gh pr create (both repos) | commit and open the rule PRs | fail: zsh did not split $FILES: pathspec did not match; no commits, PR create failed
+2026-10-12T19:02:00-05:00 | shell: git add <files>; git commit -F; gh pr create --body-file (both repos) | commit and open the rule PRs again | ok: the-greatness-lab#28, awesome-list-factory#56
+2026-10-12T19:02:10-05:00 | edit: the-greatness-lab/promote_out/TRACES.md/p1/pitch.json; check_pitch | record approved_by owner, approved_on 2026-10-12 | ok: check_pitch exit 0
+2026-10-12T19:02:20-05:00 | read: promote/playbook/p2a-storyboard-recording.md, promote/examples/storyboard.example.json, promote_out/existence-trace/p2a | read the P2a playbook and the existence-trace run as a model | ok: storyboard + raw clips + check_storyboard --raw + check_video
+2026-10-12T19:02:40-05:00 | shell: gh pr checks (both rule PRs) | check CI on the rule PRs | partial: no CI configured in either repo; local suites were green
+2026-10-12T19:03:00-05:00 | shell: gh pr merge (the-greatness-lab#28, awesome-list-factory#56); git worktree remove; aisync release; aisync log | merge the rule PRs and log them | ok: deb27c5, 75ad957
+2026-10-12T19:04:02-05:00 | shell: pip install v0.1.1 wheel in /tmp/tmd-demo-venv; write /tmp/tmd-demo synthetic project; traces new/run/append/show/validate/stats | dry-run the demo commands before recording | partial: all commands ran; two defects seen: run drops shell quoting in the recorded tool, stats counts md and jsonl twins twice (7 traces instead of 4)
+2026-10-12T19:04:20-05:00 | shell: git worktree add ../traces-md.wt-fix -b fix/build-run-quoting-stats-twins origin/main; aisync claim | create a build worktree for both defects | ok: base 2c5f664
+2026-10-12T19:04:50-05:00 | edit: traces/cli.py, traces/validate.py, tests/test_cli.py | record commands with shlex.join; drop jsonl twins from stats and status; add tests | ok: 3 files
+2026-10-12T19:05:18-05:00 | shell: unittest discover (3.14 and 3.11) | run the suite | fail: 3.11: NameError shlex in the new test (an edit run in the same batch lost the import)
+2026-10-12T19:06:00-05:00 | edit: tests/test_cli.py | add the missing import | ok: 1 line
+2026-10-12T19:07:03-05:00 | shell: /tmp/tmd-venv/bin/python -W error::ResourceWarning -m unittest discover -s tests | run the suite with setuptools available | ok: exit 0
+2026-10-12T19:07:07-05:00 | shell: python3.11 -m unittest discover -s tests | run the suite on Python 3.11 | ok: exit 0

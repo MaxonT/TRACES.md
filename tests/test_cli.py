@@ -6,6 +6,7 @@ import contextlib
 import io
 import json
 import os
+import shlex
 import shutil
 import stat
 import subprocess
@@ -368,6 +369,40 @@ class RunCommandTests(CliCase):
     def test_nothing_to_run_is_usage_error(self):
         p = self.new()
         self.assertEqual(run("run", str(p))[0], 2)
+
+    def test_recorded_command_keeps_its_quoting_and_can_be_rerun(self):
+        p = self.new()
+        cmd = [sys.executable, "-c", "print('a b')", "", "it's"]
+        code, out, _ = run("run", str(p), "--", *cmd)
+        self.assertEqual((code, out.strip()), (0, "a b"))
+        tool = model.load(p)[0].steps[0].tool
+        self.assertTrue(tool.startswith("shell: "))
+        self.assertEqual(shlex.split(tool[len("shell: "):]), cmd)
+
+
+class TwinTests(CliCase):
+    """A trace kept in both forms (X.md and X.jsonl) is one task: count it once."""
+
+    def setUp(self):
+        super().setUp()
+        d = Path(self.tmp) / ".trace"
+        d.mkdir()
+        for f in EXAMPLES.glob("*.*"):
+            if f.is_file():
+                shutil.copy(f, d / f.name)
+
+    def test_stats_and_status_count_each_trace_once_but_validate_checks_both_forms(self):
+        self.assertEqual(len(list((Path(self.tmp) / ".trace").glob("*.jsonl"))), 3)
+        data = json.loads(run("stats", "--json")[1])
+        self.assertEqual((data["traces"], data["steps"]), (3, 28))
+        status = json.loads(run("status", "--json")[1])
+        self.assertEqual(status["traces"], 3)
+        self.assertIn("valid: 6 files", run("validate")[1])
+
+    def test_a_lone_jsonl_trace_still_counts(self):
+        for f in (Path(self.tmp) / ".trace").glob("*.md"):
+            f.unlink()
+        self.assertEqual(json.loads(run("stats", "--json")[1])["traces"], 3)
 
 
 class ReadCommandTests(CliCase):
