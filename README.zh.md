@@ -70,6 +70,13 @@ traces validate                                                # 无效或不诚
 traces stats                                                   # 按 agent、按工具统计失败率
 ```
 
+### 从 agent 的 hook 记录
+
+如果你用 agent 的工具 hook 来写 trace，记得把失败事件也注册上。很多 hook 系统的"工具调用后"事件只在调用成功时触发。
+在 Claude Code 里，`PostToolUse` 看不到失败的调用，失败走的是 `PostToolUseFailure`。只挂成功事件的 hook 会写出一份
+看起来很干净、但所有失败都不见了的 trace，这违反规则 R1，`traces stats` 也就没有东西可分析。先查你所用工具的 hook
+文档找到失败事件，再故意让一条命令失败，确认 trace 里出现了 `fail` 步骤。
+
 ## 站在巨人的肩膀上
 
 | 项目 | 它如何塑造了 TRACES.md |
