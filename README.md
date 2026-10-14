@@ -71,6 +71,15 @@ traces validate                                                # exit 1 if inval
 traces stats                                                   # per agent, per tool, failure rate
 ```
 
+### Recording from agent hooks
+
+If you write traces from an agent's tool hook, register the failure event too. Many hook systems
+fire their "after tool" event only when a call succeeds. In Claude Code, `PostToolUse` never sees a
+failed call; that arrives as `PostToolUseFailure`. A hook on the success event alone writes a trace
+that looks clean while every failure is missing, which breaks rule R1 and leaves `traces stats`
+nothing to analyze. Check your tool's hook docs for its failure event, then make a command fail on
+purpose and confirm a `fail` step appears.
+
 ## Standing on the shoulders of
 
 | Project | How it shaped TRACES.md |
