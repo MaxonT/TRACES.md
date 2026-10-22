@@ -38,6 +38,8 @@ curl -fsSL https://maxont.github.io/TRACES.md/install.sh | bash
 
 Python 3.9+，只用标准库。也可以用容器：`docker run --rm ghcr.io/maxont/traces --help`。
 
+第一次成功运行命令后，CLI 会问一次：`Star MaxonT/TRACES.md on GitHub? [y/N]`。默认是不点，以后不会再问；在 CI、管道和脚本里不会出现。回答 y 会用你自己的 `gh` 登录点 star（没装 `gh` 就只打印链接）。设置 `NO_STAR_PROMPT=1` 可以跳过这个问题。
+
 ## 格式一览
 
 下面是一个最小的 TRACES.md 文件示例，`.trace/2026-10-12-claude-code-fix-date-parser.md`：

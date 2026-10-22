@@ -17,7 +17,7 @@ from datetime import datetime, timedelta
 from pathlib import Path
 from typing import List, Optional, Sequence
 
-from . import __version__, jsonschema_lite, model, stats, ui, validate, writer
+from . import __version__, jsonschema_lite, model, star_prompt, stats, ui, validate, writer
 from .fileio import LockTimeout, TracesIOError, atomic_write, find_trace_dir, newest_trace
 
 EXIT_OK, EXIT_INVALID, EXIT_USAGE, EXIT_IO = 0, 1, 2, 3
@@ -546,6 +546,8 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     self_target = args.self_trace or os.environ.get("TRACES_SELF_TRACE")
     if self_target and args.cmd not in ("append", "run"):
         _self_trace(self_target, argv, args.cmd, code, error)
+    if code == EXIT_OK:
+        star_prompt.maybe_ask("MaxonT/TRACES.md", "traces")
     return code
 
 
