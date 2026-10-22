@@ -20,6 +20,8 @@
 
 如果你也希望每个 agent 都写这样的文件，请给仓库点个 **star**，这是别人找到它的方式。
 
+<p align="center"><img src="docs/assets/cli.zh.png" alt="终端里的 traces --help：渐变的 TRACES 像素大字，下面按「记录、检查、阅读与分析、参考」分组列出命令" width="720"></p>
+
 ## 安装
 
 **交给你的 AI**（任何能执行 shell 命令的 agent）：
