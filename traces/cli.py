@@ -17,7 +17,7 @@ from datetime import datetime, timedelta
 from pathlib import Path
 from typing import List, Optional, Sequence
 
-from . import __version__, jsonschema_lite, model, stats, validate, writer
+from . import __version__, jsonschema_lite, model, stats, ui, validate, writer
 from .fileio import LockTimeout, TracesIOError, atomic_write, find_trace_dir, newest_trace
 
 EXIT_OK, EXIT_INVALID, EXIT_USAGE, EXIT_IO = 0, 1, 2, 3
@@ -370,15 +370,29 @@ def cmd_version(args) -> int:
 
 # ---------------------------------------------------------------- parser
 
+class _Root(argparse.ArgumentParser):
+    """The top-level parser: its --help is the logo screen, not argparse's default."""
+
+    def format_help(self):
+        commands, options = {}, []
+        for action in self._actions:
+            if isinstance(action, argparse._SubParsersAction):
+                commands = {a.dest: a.help or "" for a in action._choices_actions}
+            elif action.option_strings and action.dest != "help":
+                flag = action.option_strings[0] + (" " + action.metavar if action.metavar else "")
+                options.append((flag, action.help or "print the version"))
+        return ui.help_screen(ui.style_for(sys.stdout), __version__, commands, options, EPILOG) + "\n"
+
+
 def build_parser() -> argparse.ArgumentParser:
-    p = argparse.ArgumentParser(
+    p = _Root(
         prog="traces", epilog=EPILOG, formatter_class=argparse.RawDescriptionHelpFormatter,
         description="TRACES.md reference CLI: record, check and analyze what an AI agent did.")
     p.add_argument("--version", action="version",
                    version="traces %s (spec %s)" % (__version__, model.SPEC_ID))
     p.add_argument("--self-trace", metavar="FILE",
                    help="append this run as a step to FILE (or set TRACES_SELF_TRACE)")
-    sub = p.add_subparsers(dest="cmd", metavar="<command>")
+    sub = p.add_subparsers(dest="cmd", metavar="<command>", parser_class=argparse.ArgumentParser)
 
     def add(name, fn, help_, **kw):
         sp = sub.add_parser(name, help=help_, description=help_,
