@@ -13,5 +13,3 @@ base_sha: b28bc93
 2026-10-21T20:59:07-05:00 | edit: traces/ui.py, tests/test_ui.py | added What/Why/How docstrings | ok
 2026-10-21T20:59:07-05:00 | shell: python -W error::ResourceWarning -m unittest discover -s tests | reran suite | ok: all pass, 1 skipped
 2026-10-21T20:59:07-05:00 | edit: pyproject.toml, traces/__init__.py | version 0.1.3 -> 0.1.4 | ok
-2026-10-21T21:31:10-05:00 | refine.terminal_shot (the-greatness-lab) | rendered docs/assets/cli.png and cli.zh.png from traces --help | ok
-2026-10-21T21:31:10-05:00 | edit: README.md, README.zh.md, tests/test_site.py | added CLI screenshot under the star line; image-count tests now include it | ok: suite OK
