@@ -11,5 +11,6 @@ COPY pyproject.toml README.md LICENSE ./
 COPY traces ./traces
 RUN pip install --no-cache-dir . && rm -rf /src
 WORKDIR /data
+ENV NO_STAR_PROMPT=1
 ENTRYPOINT ["traces"]
 CMD ["--help"]
