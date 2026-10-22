@@ -36,14 +36,14 @@ class ReadmeTests(unittest.TestCase):
     def test_english_readme_uses_only_english_images(self):
         images = re.findall(r'src="([^"]+)"', self.en)
         self.assertGreaterEqual(len(images), 1)
-        self.assertLessEqual(len(images), 2)
+        self.assertLessEqual(len(images), 3)
         for src in images:
             self.assertNotIn(".zh.", src)
             self.assertTrue((ROOT / src).exists(), src)
 
     def test_chinese_readme_uses_zh_images(self):
         images = re.findall(r'src="([^"]+)"', self.zh)
-        self.assertEqual(sorted(images), ["docs/assets/how-it-works.zh.gif", "docs/banner.zh.svg"])
+        self.assertEqual(sorted(images), ["docs/assets/cli.zh.png", "docs/assets/how-it-works.zh.gif", "docs/banner.zh.svg"])
         for src in images:
             self.assertTrue((ROOT / src).exists(), src)
 
