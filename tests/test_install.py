@@ -12,6 +12,7 @@ import tempfile
 import unittest
 import zipfile
 from pathlib import Path
+from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parent.parent
 
@@ -38,6 +39,8 @@ class WheelInstallTests(unittest.TestCase):
              "--quiet", "-w", str(dist), str(src)], capture_output=True, text=True)
         if build.returncode != 0:
             shutil.rmtree(cls.tmp, ignore_errors=True)
+            if os.environ.get("CI"):
+                raise AssertionError("wheel build failed in CI: " + build.stderr)
             raise unittest.SkipTest("cannot build a wheel here (need setuptools>=77: "
                                     "pip install setuptools wheel): " + build.stderr[-200:])
         cls.wheel = next(dist.glob("*.whl"))
@@ -111,6 +114,22 @@ class WheelInstallTests(unittest.TestCase):
                            capture_output=True, text=True)
         self.assertEqual(r.returncode, 0, r.stderr)
         self.assertRegex(r.stdout, r"spec traces/0\.1\.\d+")
+
+
+class WheelBuildGateTests(unittest.TestCase):
+    def test_ci_build_failure_is_an_error_not_a_skip(self):
+        failed = subprocess.CompletedProcess([], 1, stdout="", stderr="broken package metadata")
+        with patch.dict(os.environ, {"CI": "true"}), \
+                patch(__name__ + ".subprocess.run", return_value=failed):
+            with self.assertRaisesRegex(AssertionError, "broken package metadata"):
+                WheelInstallTests.setUpClass()
+
+    def test_local_build_failure_keeps_the_offline_skip(self):
+        failed = subprocess.CompletedProcess([], 1, stdout="", stderr="build tools unavailable")
+        with patch.dict(os.environ, {}, clear=True), \
+                patch(__name__ + ".subprocess.run", return_value=failed):
+            with self.assertRaises(unittest.SkipTest):
+                WheelInstallTests.setUpClass()
 
 
 if __name__ == "__main__":
